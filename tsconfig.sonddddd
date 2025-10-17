@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "target": "ES2020",
+        "module": "ESNext", 
+        "moduleResolution": "bundler", 
+        "baseUrl": "./assets", 
+        "rootDir": "./assets/ts", 
+         "outDir": "./assets/js", 
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "paths": {
+        "@ts/*": ["ts/*"], 
+        "@vendor/*": ["vendor/*"] 
+    }
+    },
+    "include": ["assets/ts/**/*"],
+    "exclude": [
+    "assets/vendor", // Exclure les dépendances externes gérées par AssetMapper
+    "vendor" // Exclure le dossier vendor de Symfony
+  ]
+}

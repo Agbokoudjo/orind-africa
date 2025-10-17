@@ -1,0 +1,4 @@
+user:
+  not_found: User %username% not found
+
+  already_super_admin : User "%s" is already a super administrator.

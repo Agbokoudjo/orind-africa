@@ -1,0 +1,65 @@
+Oui, il est tout à fait possible de créer un algorithme en JavaScript pour afficher un aperçu des fichiers image, PDF et vidéo avant de les télécharger. Cela se fait principalement en utilisant deux API JavaScript natives : **`URL.createObjectURL()`** et **`FileReader`**.
+
+### Méthodes et logique
+
+1.  **L'événement `change`** : Il faut d'abord écouter l'événement `change` sur l'élément `<input type="file">`. Chaque fois qu'un utilisateur sélectionne un ou plusieurs fichiers, cet événement se déclenche.
+
+2.  **Accéder aux fichiers** : Les fichiers sélectionnés sont stockés dans la propriété **`files`** de l'élément input. C'est un objet de type `FileList` qui contient une liste d'objets `File`. Vous pouvez itérer sur cette liste pour traiter chaque fichier individuellement.
+
+3.  **Vérifier le type de fichier** : Pour savoir comment afficher un aperçu, vous devez inspecter la propriété **`type`** de chaque objet `File`. Par exemple, si `file.type.startsWith('image/')`, c'est une image. Si `file.type === 'application/pdf'`, c'est un PDF, et si `file.type.startsWith('video/')`, c'est une vidéo.
+
+-----
+
+### Aperçu des images et vidéos
+
+Pour les images et les vidéos, la méthode la plus simple et la plus performante est d'utiliser **`URL.createObjectURL(file)`**.
+
+  * Cette méthode crée une URL unique pour le fichier stocké dans la mémoire du navigateur.
+  * Cette URL est une référence temporaire à l'objet `File` et peut être utilisée comme source (`src`) pour des balises HTML telles que `<img src="...">` ou `<video src="...">`.
+  * C'est très rapide car le navigateur ne lit pas le contenu du fichier, il crée simplement une référence.
+  * N'oubliez pas de libérer la mémoire en utilisant **`URL.revokeObjectURL(url)`** lorsque vous n'avez plus besoin de l'aperçu.
+
+**Exemple d'utilisation pour une image :**
+
+```javascript
+const input = document.querySelector('input[type="file"]');
+const preview = document.querySelector('img');
+
+input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const fileUrl = URL.createObjectURL(file);
+        preview.src = fileUrl;
+        preview.onload = () => URL.revokeObjectURL(fileUrl);
+    }
+});
+```
+
+-----
+
+### Aperçu des fichiers PDF
+
+Pour les fichiers PDF, il existe deux approches :
+
+1.  **Utiliser un élément `<iframe>` ou `<embed>`** : Comme pour les images et les vidéos, vous pouvez utiliser `URL.createObjectURL(file)` et l'attribuer à l'attribut `src` d'un `<iframe>` ou d'un `<embed>`. C'est la méthode la plus simple pour afficher le PDF directement dans le navigateur.
+
+    ```javascript
+    const file = input.files[0];
+    if (file && file.type === 'application/pdf') {
+        const fileUrl = URL.createObjectURL(file);
+        const iframe = document.getElementById('pdf-preview');
+        iframe.src = fileUrl;
+    }
+    ```
+
+2.  **Utiliser l'API `FileReader`** : Vous pouvez également utiliser `FileReader.readAsDataURL(file)` pour lire le contenu du fichier et obtenir une URL en base64. Cette méthode est utile pour de petits fichiers car elle charge le fichier en mémoire. C'est moins performant que `createObjectURL` pour les grands fichiers, mais elle est très pratique pour les images.
+
+### Considérations générales
+
+  * **Sécurité** : Les aperçus sont générés côté client, ce qui signifie que les fichiers ne sont pas envoyés au serveur tant que vous ne les téléchargez pas explicitement (par exemple, via un formulaire `submit` ou une requête `AJAX`).
+  * **Compatibilité** : Ces méthodes sont largement supportées par les navigateurs modernes.
+  * **Multiples fichiers** : Vous devez boucler sur `input.files` si vous autorisez la sélection de plusieurs fichiers avec l'attribut `multiple`.
+
+[Comment prévisualiser une image avant de l'uploader en JavaScript](https://www.youtube.com/watch?v=AlOYLkTEv1Q)
+Cette vidéo YouTube présente un tutoriel en français sur la façon de prévisualiser une image en utilisant JavaScript, ce qui est directement pertinent pour votre question.
+http://googleusercontent.com/youtube_content/0

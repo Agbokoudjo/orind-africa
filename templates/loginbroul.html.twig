@@ -1,0 +1,186 @@
+
+<style>
+.hidden-checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Conteneur */
+.custom-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text);
+  user-select: none;
+  position: relative;
+  padding-left: 28px;
+}
+
+/* Case custom */
+.custom-checkbox .checkmark {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 18px;
+  width: 18px;
+  border: 2px solid var(--teal);
+  border-radius: 4px;
+  background-color: white;
+  transition: all 0.2s ease;
+}
+
+/* Quand on coche */
+.hidden-checkbox:checked + .checkmark {
+  background-color: var(--teal);
+  border-color: var(--teal);
+}
+
+/* Icône de check (avec un pseudo-élément) */
+.checkmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 4px;
+  top: 0px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Afficher le check au clic */
+.hidden-checkbox:checked + .checkmark::after {
+  display: block;
+}
+:root {
+    --primary: #0d6efd;   /* bleu professionnel */
+    --background: #f4f6f9; /* fond dashboard */
+    --white: #ffffff;
+    --gray: #6c757d;
+    --border: #dee2e6;
+}
+ body {
+    background: var(--background);
+    font-family: "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-box {
+    width: 380px;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    padding: 30px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-logo img {
+    width: 60px;
+    margin-bottom: 10px;
+}
+
+.login-brand {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.login-box-body .form-group {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--gray);
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(13,110,253,0.15);
+}
+
+.login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.remember-me {
+    font-size: 14px;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn {
+    background: var(--primary);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    color: var(--white);
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #0b5ed7;
+}
+</style>
+ <div class="login-box">
+    <div class="login-header">
+        <a href="{{ path('sonata_admin_dashboard') }}">
+            <div class="login-logo">
+                <img src="{{ asset(sonata_config.logo) }}" alt="{{ sonata_config.title }}">
+            </div>
+            <p class="login-brand">{{ sonata_config.title }}</p>
+        </a>
+    </div>
+
+    <div class="login-box-body">
+        {% if error %}
+            <div class="alert alert-danger">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+
+        <p class="login-box-msg">Connexion à l’espace administration</p>
+
+        {{ form_start(form) }}
+            <div class="form-group">
+                {{ form_widget(form.email, { attr: { class: 'form-control', placeholder: 'Email' } }) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_widget(form.password, { attr: { class: 'form-control', placeholder: 'Mot de passe' } }) }}
+            </div>
+
+            <div class="login-options">
+                <label class="remember-me">
+                    {{ form_widget(form.remember_me) }}
+                    Se souvenir de moi
+                </label>
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>

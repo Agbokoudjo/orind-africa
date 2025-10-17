@@ -1,5 +1,9 @@
 twig:
     file_name_pattern: '*.twig'
+    globals:
+        NAME_SITE: "ORIND AFRICA"
+    # form_themes:
+    #     - bundles/SonataUserBundle/Form/form_admin_fields.html.twig
 
 when@test:
     twig:

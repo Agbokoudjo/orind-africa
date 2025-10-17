@@ -1,0 +1,7 @@
+permission:
+  role: Création d'un nouveau rôle
+  user: Gestion des Rôles et Responsabilités Utilisateur
+label_create_domain_action: Création d'un nouveau domaine d'action ministériel
+label_create_group_action:  Création d'un nouveau group d'action ministériel
+label_create_admin_user:  Création d'un nouveau administrateur
+label_create_member_user: Création d'un nouveau membre

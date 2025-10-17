@@ -1,0 +1,153 @@
+{#
+
+* This file is part of the project by AGBOKOUDJO Franck.
+ *
+ * (c) AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
+ * Phone: +229 01 67 25 18 86
+ * LinkedIn: https://www.linkedin.com/in/internationales-web-apps-services-120520193/
+ * Github: https://github.com/Agbokoudjo/
+ * Company: INTERNATIONALES WEB APPS & SERVICES
+ *
+ * For more information, please feel free to contact the author.
+
+#}
+
+{% extends base_template %}
+{% block sonata_nav %}{% endblock sonata_nav %}
+{% block sonata_left_side %}{% endblock %}
+ {% block sonata_header %}{% endblock %}
+{% block body_attributes %}class="sonata-bc login-page {% if _use_icheck %}sonata-icheck{% endif %}"{% endblock %}
+{% block stylesheets %}   
+{# <link rel="stylesheet" href="{{asset('styles/login.css')}}"> #}
+<style>
+    :root {
+            --teal: #0ec5b2;
+            --orange: #e19a2a;
+            --text: #3b3b3b;
+            --light: #eeedf2;
+            --primary: #0ec5b2;
+            --background: #f4f6f9;
+            --white: #ffffff;
+            --gray: #6c757d;
+            --border: #dee2e6;
+            --font-family: 'Inter', sans-serif;
+            --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.2); /* Ombre pour faire flotter le formulaire sur le fond sombre */
+            --transition-speed: 0.3s;
+            --border-radius: 8px;
+        }
+
+    html,body.sonata-bc.login-page{
+        background: linear-gradient(145deg, #101c27 0%, #0d273a 50%, var(--teal) 100%);
+        font-family: var(--font-family);
+        color: var(--text);
+        margin: 0;
+        min-height: 100vh;
+        align-content: center ;
+        overflow-y: auto;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    h1 {
+        color: var(--text);
+        font-size: 1.5rem;
+        font-weight: 800; /* Plus de poids pour l'identité de marque */
+        margin-bottom: 0.5rem;
+        text-align: center;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        }
+        p.subtitle {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 500;
+        }
+</style>
+  {% endblock %}
+{% block sonata_footer %} {% endblock %}
+{% block title %}
+    {{ "title_user_edit_authentication" |trans({}, 'SonataUserBundle',app.locale) }}
+{% endblock %}
+{% block javascripts_inline %}{% endblock %}
+{% block javascript_inline %}{% endblock %}
+{% block sonata_wrapper %}
+   <div class="login-box">
+        {% block login_box_header %}
+            <div class="login-header">
+                {% if 'icon' == sonata_config.getOption('logo_content') or 'all' == sonata_config.getOption('logo_content') %}
+                    <div class="login-logo">
+                        <img style="width:64px;" src="{{ asset(sonata_config.logo) }}" alt="{{ sonata_config.title }}">
+                    </div>
+                {% endif %}
+                {% if 'text' == sonata_config.getOption('logo_content') or 'all' == sonata_config.getOption('logo_content') %}
+                        <h1 class="login-brand">{{ sonata_config.title }}</h1> 
+                {% endif %}
+                <p class="login-box-msg subtitle">{{ 'title_user_authentication'|trans({}, 'SonataUserBundle',app.locale) }}</p>
+            </div>
+        {% endblock %}
+        <div class="login-box-body">
+            {% block sonata_user_login_form %}
+                {% block sonata_user_login_error %}
+                    {% if error %}
+                        <div class="alert alert-danger alert-error">
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                    {% endif %}
+                {% endblock %}
+                
+                <form action="{{ path("app_admin_user_login") }}" method="post" role="form">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}"/>
+                    <div class="form-group has-feedback">
+                        <label for="email">{{ 'form.label_email_admin'|trans({}, 'SonataUserBundle') }}</label>
+                        <div class="input-icon">
+                            <input class="form-control"
+                                id="email"
+                                name="email"
+                                placeholder="admin@orindafrica.com"
+                                required="required"
+                                type="email"
+                                value="{{ last_username }}"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="form-group has-feedback">
+                        <label for="password">{{ 'security.login.password'|trans({}, 'SonataUserBundle') }}</label>
+                        <div class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <input class="form-control"
+                                id="password"
+                                name="password"
+                                placeholder="......"
+                                required="required"
+                                type="password"
+                                autocomplete="current-password"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 2rem;">
+                        <button type="submit" name="submit" class="btn btn-primary btn-block btn-flat">
+                            {{ 'security.login.submit'|trans({}, 'SonataUserBundle') }}
+                        </button>
+                    </div>
+                 </form>
+            {% endblock %}
+        </div>
+        <div class="login-box-footer">
+            <p>© 2025 ORIND AFRICA - Services Numériques</p>
+        </div>
+    </div>
+{% endblock sonata_wrapper %}
+{% block javascripts %}
+    <script src="{{asset('login.js')}}"></script>
+{% endblock %}
+

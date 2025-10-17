@@ -1,0 +1,421 @@
+@import 'sweetalert2/src/sweetalert2.scss';
+
+:root {
+  /* --color-sidebar-bg-start: #1C1C1C; 
+  --color-sidebar-bg-middle: #D46B08;
+  --color-sidebar-bg-end: #00C2A8;  */
+   /* Arrière-plan du header */
+  --color-bg-app-header: #fff; 
+  
+  /* Couleur du texte et des icônes du header */
+  --color-text-header: #FFFFFF;
+  
+  /* Ombre pour la profondeur, subtile */
+  --color-shadow-header: rgba(0, 0, 0, 0.2); 
+  
+  /* Bordure inférieure pour la séparation */
+  --color-border-bottom-header: #333333; 
+
+  /* Arrière-plan de la partie principale */
+  --color-bg-main: #FFFFFF; 
+  
+  /* Couleur du texte général */
+  --color-text-main: #1C1C1C;
+
+   --teal:#0ec5b2;          /* vert/bleu */
+      --orange:#e19a2a;        /* orange */
+      --text:#3b3b3b;
+      --light:#eeedf2;         /* gris clair des champs */
+  --color-sidebar-text:var(--text);
+   /* Vos couleurs de base */
+  --teal: #0ec5b2;          /* vert/bleu */
+  --orange: #e19a2a;        /* orange */
+  --text: #3b3b3b;          /* gris foncé */
+  --light: #eeedf2;         /* gris clair */
+  --bg-white: #FFFFFF;      /* blanc */
+  
+  /* ======================================= */
+  /* Variables pour la navigation de la SIDEBAR */
+  /* ======================================= */
+  
+  /* Couleur du texte et des icônes par défaut */
+  --color-sidebar-text: var(--bg-white);
+  --color-sidebar-icon: var(--bg-white);
+  
+  /* État de survol (Hover) */
+  --color-sidebar-nav-link-hover: rgba(255, 255, 255, 0.1);
+  --color-border-left-sidebar: var(--teal);
+  
+  /* État actif (Active) */
+  --color-bg-sidebar-nav-link-active: rgba(255, 255, 255, 0.2);
+  --color-text-sidebar-nav-link-active: var(--bg-white);
+  /* ========================================= */
+  /* Variables pour la barre d'actions */
+  /* ========================================= */
+  
+  /* Fond de la barre d'actions */
+  --color-bg-content-header-navbar-container-header: var(--bg-white);
+  
+  /* Bouton "Ajouter" (Action principale) */
+  --color-bg-content-header-a-btn-create: var(--orange);
+  --color-border-content-header-a-btn-create: var(--orange);
+  --color-white: #FFFFFF;
+  --color-bg-hover-content-header-a-btn-create: #D46B08; /* Une teinte d'orange plus foncée */
+  --color-border-hover-content-header-a-btn-create: #D46B08;
+  
+  /* Boutons secondaires (Filtres, etc.) */
+  --color-bg-sonata-actions-sonata-ba-action-filter: var(--light);
+  --color-border-sonata-actions-sonata-ba-action-filter: #D6D6D6; /* Gris légèrement plus foncé */
+  --color-text-sonata-actions-sonata-ba-action-filter: var(--text);
+  --color-bg-hover-sonata-actions-sonata-ba-action-filter: #E5E5E5; /* Gris clair un peu plus foncé */
+  --color-border-hover-sonata-actions-sonata-ba-action-filter: #D6D6D6;
+  
+  /* Bouton actif (Liste/Grille) */
+  --color-bg-mode-display: var(--text);
+  --color-text-mode-display: var(--bg-white);
+  --color-bg-hover-mode-display: #2A2A2A; /* Une teinte de gris plus foncée */
+  /* ========================================= */
+  /* Variables pour le compteur et le badge de filtre */
+  /* ========================================= */
+
+  /* Couleur de l'icône de filtre lorsqu'il est ACTIF */
+  --color-text-sonata-toggle-filter-active: var(--teal);
+
+  /* Fond du badge (compteur de filtres actifs) */
+  --color-bg-sonata-ba-action-filter-badge: var(--teal);
+
+  /* Couleur du texte du badge */
+  --color-text-sonata-ba-action-filter-badge: #FFFFFF;
+
+  
+  /* ========================================= */
+  /* Titre du "card-header" */
+  /* ========================================= */
+  
+  /* Couleur du texte du titre (sur un fond de dégradé) */
+  --color-bg-card-title:#fff; /* Blanc pur */
+  
+  /* ========================================= */
+  /* Labels des filtres */
+  /* ========================================= */
+  
+  /* Couleur du texte du label de filtre (sur un fond blanc) */
+  --color-text-sonata-filters-box-filter-label: #ffff; /* Votre gris foncé */
+  
+  /* ========================================= */
+  /* Dégradé de la "card" pour la section filtre */
+  /* ========================================= */
+  
+  /* Utilisation des mêmes couleurs que pour le sidebar */
+  --color-sidebar-bg-start: var(--orange);
+  --color-sidebar-bg-middle: var(--orange);
+  --color-sidebar-bg-end: var(--teal);
+
+  /* ========================================= */
+  /* Corps du tableau */
+  /* ========================================= */
+  
+  /* Couleur du texte principal du tableau */
+  --color-text-table: var(--text); /* Votre gris foncé */
+  
+  /* ========================================= */
+  /* Header du tableau (thead) */
+  /* ========================================= */
+  
+  /* Fond de l'en-tête du tableau */
+  --color-bg-table-thead-th: var(--light); /* Votre gris clair */
+  
+  /* Couleur du texte de l'en-tête */
+  --color-text-table-thead-th: var(--text); /* Votre gris foncé */
+  
+  /* Bordure du bas de l'en-tête */
+  --color-border-bottom-table-th: #D6D6D6; /* Un gris légèrement plus foncé */
+  
+  /* Ombre subtile sous l'en-tête */
+  --color-shadow-table-th: rgba(0, 0, 0, 0.05);
+   /* ========================================= */
+  /* Boutons d'action ("..." ) */
+  /* ========================================= */
+  
+  /* Couleur du texte et de l'icône par défaut */
+  --color-text-table-list-actions-object-item-action: var(--text);
+  
+  /* Fond et bordure au survol et actif */
+  --color-text-table-list-actions-object-item-action-hover-focus-active: rgba(0, 0, 0, 0.05);
+  
+  /* Couleur de l'icône des trois points */
+  --color-text-table-list-actions-object-item-action-span: var(--text);
+  --color-text-table:var(--text);
+
+  /* Couleurs pour les badges */
+  --color-badge-active-bg: var(--teal);
+  --color-badge-active-text: var(--bg-white);
+  --color-badge-inactive-bg: var(--light);
+  --color-badge-inactive-text: var(--text);
+
+
+  /* ========================================= */
+    /* Bouton "Filtrer" (Primaire) */
+    /* ========================================= */
+    --color-btn-primary-bg: var(--orange);
+    --color-btn-primary-border: var(--orange);
+    --color-btn-primary-text: var(--bg-white);
+    --color-btn-primary-hover-bg: #D46B08; /* Orange plus foncé pour le survol */
+
+    /* ========================================= */
+   /* Bouton "Effacer" (Secondaire) */
+   /* ========================================= */
+   --color-btn-default-bg: var(--light);
+   --color-btn-default-border: #D6D6D6; /* Un gris subtil */
+   --color-btn-default-text: var(--text);
+   --color-btn-default-hover-bg: #E5E5E5;
+
+   /* ========================================= */
+   /* Bouton "Filtres avancés" (Tertiaire) */
+   /* ========================================= */
+   --color-btn-advanced-text: var(--teal);
+   --color-btn-advanced-text-hover: #088c7f; /* Une teinte de teal plus foncée */
+
+    /* ========================================= */
+  /* Labels des champs de saisie */
+  /* ========================================= */
+  --color-form-label: var(--text); /* Gris foncé pour la lisibilité */
+
+  /* ========================================= */
+  /* Champs de saisie (input, select) */
+  /* ========================================= */
+  --color-form-input-bg: var(--bg-white); /* Fond blanc */
+  --color-form-input-border: var(--light); /* Bordure gris clair */
+  --color-form-input-focus-border: var(--teal); /* Bordure verte au focus */
+  --color-form-input-text: var(--text); /* Texte gris foncé */
+  --color-text-header:#fff;
+
+  --color-text-nav-link-header:#fff ;
+}
+.skip-links{
+    display:none;
+}
+#app-sidebar{
+   background: linear-gradient(135deg, var(--teal), var(--orange));
+}
+#sidebar-brand{
+   background:linear-gradient(90deg, var(--orange), var(--teal));
+   font-weight: bolder;
+}
+#app-header{
+   background:linear-gradient(to right, var(--teal),var(--orange));
+   color:#ffff !important;
+}
+.btn-sidebar{
+  color:#fff !important;
+  background-color:inherit; 
+  box-shadow:2px ;
+  border:2px solid inherit;
+}
+
+
+/* Le reste du code de votre sidebar (tel que vous l'avez fourni) */
+#app-sidebar .nav-item > .nav-link {
+  color: var(--color-sidebar-text);
+}
+
+#app-sidebar .nav-item > .nav-link i {
+  color: var(--color-sidebar-icon);
+}
+
+#app-sidebar .nav-item > .nav-link:hover {
+  background-color: var(--color-sidebar-nav-link-hover);
+  color: var(--bg-white);
+  border-left: 3px solid var(--color-border-left-sidebar);
+}
+
+#app-sidebar .nav-item > .nav-link.active {
+   font-weight: bolder;
+  background-color: var(--color-bg-sidebar-nav-link-active);
+  color: var(--color-text-sidebar-nav-link-active);
+  border-left: 3px solid var(--teal); /* J'ai remplacé la variable par la couleur --teal directement pour la cohérence visuelle */
+}
+ 
+/* Table header (thead) */
+.table thead th > *{
+  background-color: var( --color-bg-table-thead-th); /* Fond très clair pour l'en-tête */
+  color:var(--text) !important; /* Deep Night Blue pour le texte de l'en-tête */
+}
+tbody a *{
+ text-decoration:none;
+}
+.table thead th {
+   text-transform:uppercase;
+}
+
+.badge-active {
+  background-color: var(--color-badge-active-bg);
+  color: var(--color-badge-active-text);
+}
+
+.badge-inactive {
+  background-color: var(--color-badge-inactive-bg);
+  color: var(--color-badge-inactive-text);
+}
+ 
+/* Bouton de soumission "Filtrer" */
+.sonata-filters-box button.btn-primary {
+  background-color: var(--color-btn-primary-bg);
+  border-color: var(--color-btn-primary-border);
+  color: var(--color-btn-primary-text);
+}
+
+.sonata-filters-box button.btn-primary:hover {
+  background-color: var(--color-btn-primary-hover-bg);
+  border-color: var(--color-btn-primary-hover-bg);
+}
+
+/* Bouton de réinitialisation "Effacer" */
+.sonata-filters-box button.btn-default {
+  background-color: var(--color-btn-default-bg);
+  border-color: var(--color-btn-default-border);
+  color: var(--color-btn-default-text);
+}
+
+.sonata-filters-box button.btn-default:hover {
+  background-color: var(--color-btn-default-hover-bg);
+  border-color: var(--color-btn-default-hover-bg);
+}
+
+/* Bouton "Filtres avancés" */
+/* Il s'agit du dernier bouton de la dernière form-group */
+.sonata-filters-box .form-group:last-child a.btn {
+    color: var(--color-btn-advanced-text);
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.sonata-filters-box .form-group:last-child a.btn:hover {
+    color: var(--color-btn-advanced-text-hover);
+    text-decoration: underline;
+}
+
+/* Application des variables aux éléments */
+.sonata-filter-form  label {
+    color: var(--color-form-label);
+}
+
+.sonata-filter-form  input,
+.sonata-filter-form  select {
+    background-color: var(--color-form-input-bg);
+    border-color: var(--color-form-input-border);
+    color: var(--color-form-input-text);
+}
+.sonata-filter-form  input:focus,
+.sonata-filter-form  select:focus {
+    border-color: var(--color-form-input-focus-border);
+}
+.user-menu  .user-identify{
+   color:#fff !important;
+}
+
+.btn.redirection,.btn.redirection:hover{
+  background-color:var(--orange);
+  color: #fff ;
+  border-color: var(--orange);
+}
+
+.sonata-ba-form-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Ajoute un espace entre les boutons */
+  }
+
+/* Style de base pour tous les boutons du formulaire */
+.sonata-ba-form-actions .btn {
+  font-weight: bold;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Style des boutons au survol */
+.sonata-ba-form-actions .btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Espace entre l'icône et le texte */
+.sonata-ba-form-actions .btn i {
+  margin-right: 20px;
+}
+
+/* * Styles spécifiques pour chaque bouton 
+ * en utilisant l'attribut "name"
+ */
+
+/* Bouton "Créer" (nommé "btn_create") */
+button[name="btn_create"],button[name="btn_update"] {
+  background-color: var(--teal);
+  color: var(--bg-white);
+}
+
+/* Bouton "Créer et retourner à la liste" (nommé "btn_create_and_list") */
+button[name="btn_create_and_list"],button[name="btn_update_and_list"] {
+  background-color: var(--orange);
+  color: var(--bg-white);
+}
+
+/* Bouton "Créer et ajouter" (nommé "btn_create_and_create") */
+button[name="btn_create_and_create"],button[name="btn_update_and_update"] {
+  background-color: var(--teal);
+  color: var(--bg-white);
+}
+
+/* * Gestion de la responsivité pour les écrans mobiles 
+ */
+@media (max-width: 768px) {
+  .sonata-ba-form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Ajoute un espace entre les boutons */
+  }
+
+  .sonata-ba-form-actions .btn {
+    width: 100%;
+    margin-bottom: 0; /* Important pour éviter les marges supplémentaires */
+  }
+}
+
+form label {
+  color: var(--text);
+  font-weight: bold; /* Optionnel, pour plus de clarté */
+}
+
+/* Style du titre de la page de création */
+.title-create,.title-edit {
+  color: var(--text);
+  font-size: 24px;
+  font-weight: bold;
+  text-transform:uppercase;
+  font-style: italic;
+}
+
+.box-header .box-title{
+  padding-left: 12px ;
+  padding-top: 5px;
+}
+.app-content-header .navbar-container-header,
+.box.box-solid.box-solid-with{
+  border-top: 2px solid var(--teal); 
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.sonata-ba-form .tab-content{
+  margin-top:20px ;
+}

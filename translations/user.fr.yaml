@@ -1,0 +1,23 @@
+member:
+    since: "Membre depuis" 
+
+ADMIN: ADMINISTRATEUR
+MEMBER: MEMBRE
+SIMPLE : CLIENT
+
+forms:
+    label_tab_infos_generale: RENSEIGNEMENTS 
+    with_generale: GÉNÉRALES
+    roles: RÔLE MÉTIER PRINCIPAL
+    roles_matrix: ROLES MATRICIELS
+    label_phone: Numéro de téléphone
+    label_geolocalisation: GÉOLOCALISATIONS
+    country.placeholder: "Choississez votre pays"
+    label_username: Nom & Prénom (s)
+    label_email: Adresse email
+    label_avatar: PHOTO
+    label_identitydocument: Pièce d'identité (Carte d'identité ou Passeport)
+    mission_profil: PROFILE & PARCOUR PROFESSION
+    label_profile: Profile de la mission 
+    label_profile_placeholder: |
+        Ex: DEVELOPPEUR FULL-STACK SYMFONY & REACTJS

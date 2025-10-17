@@ -1,0 +1,9 @@
+app.admin.group.user: Utilisateurs
+sonata.admin.user.admin: Administrateurs
+sonata.admin.user.member: Les Membres
+app.admin.group.domain_group.action: Gestion Ministérielle
+sonata.admin.domain.action: Domaines 
+sonata.admin.group.action: Groupes
+app.admin.group.permission.manager: Gestion des Permissions
+sonata.admin.permission.role: Rôles et Permissions
+sonata.admin.user.permission.role: Responsabilités #Attribution des Rôles

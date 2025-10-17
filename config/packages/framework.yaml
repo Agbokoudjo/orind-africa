@@ -1,10 +1,10 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
-
+    router:
+        default_uri: '%env(APP_URL)%'
     # Note that the session will be started ONLY if you read or write from it.
     session: true
-
     #esi: true
     #fragments: true
 
@@ -13,3 +13,14 @@ when@test:
         test: true
         session:
             storage_factory_id: session.storage.factory.mock_file
+
+when@dev:
+    framework:
+        http_cache: false
+        assets:
+            base_urls: '%env(APP_URL_DEV)%'
+        router:
+            default_uri: '%env(APP_URL_DEV)%'
+        trusted_hosts: ['^.+\.ngrok-free\.app$','orind-africa.local']
+        trusted_proxies: ['127.0.0.1', 'REMOTE_ADDR','ngrok-agent-ips','137.255.58.246']
+        trusted_headers: ['x-forwarded-for', 'x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-prefix']

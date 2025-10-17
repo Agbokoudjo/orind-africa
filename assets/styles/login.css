@@ -1,0 +1,269 @@
+.skip-links{
+    display:none;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0 ;
+    padding:0 ;
+}
+
+:root{
+    --color-login-box: #ffff;
+     --teal:#0ec5b2;          /* vert/bleu */
+      --orange:#e19a2a;        /* orange */
+      --text:#3b3b3b;
+      --light:#eeedf2;         /* gris clair des champs */
+       --primary: #0ec5b2; 
+    --background: #f4f6f9; /* fond dashboard */
+    --white: #ffffff;
+    --gray: #6c757d;
+    --border: #dee2e6;
+}
+html,body.sonata-bc.login-page{
+  margin: 0;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: linear-gradient(135deg, var(--teal), var(--orange));
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background: var(--color-login-box);
+  padding: 2rem 2.5rem;
+  border-radius: 1rem;
+  width: 380px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.login-logo img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 100%;
+}
+.login-logo a{
+    text-decoration: none;
+}
+.login-brand {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 0.5rem;
+}
+
+.login-box-body {
+  margin-top: 1.2rem;
+}
+
+.login-box-msg {
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.8rem 2.5rem 0.8rem 0.8rem;
+  border: 1px solid var(--light);
+  border-radius: 0.5rem;
+  background-color: var(--light);
+  font-size: 0.95rem;
+  color: var(--text);
+  transition: border 0.3s ease, background 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--teal);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(14, 197, 178, 0.2);
+}
+
+.form-control-feedback {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--teal);
+}
+
+.checkbox label {
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.btn {
+  padding: 0.7rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--teal);
+  border: none;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0aa191;
+}
+
+.alert {
+  padding: 0.7rem;
+  border-radius: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.alert-danger {
+  background: #ffe6e6;
+  color: #b50000;
+  border: 1px solid #e5a4a4;
+}
+
+.login-box-footer {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.login-box-footer a {
+  color: var(--orange);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-box-footer a:hover {
+  text-decoration: underline;
+}
+.login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.remember-me {
+    font-size: 14px;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn {
+    background: var(--primary);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    color: var(--white);
+    font-size: 15px;
+    cursor: pointer;
+}
+/* Animation d’apparition */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* input[type="checkbox"] {
+   -webkit-appearance: checkbox !important;
+  -moz-appearance: checkbox !important;
+  appearance: checkbox !important;
+  display: inline-block !important;
+  width: 16px ;
+  height: 160px ;
+  accent-color: var(--teal); 
+  margin-right: 6px;
+}
+.checkbox label{
+      margin-left:1.2rem;
+} */
+ /* Cacher le checkbox natif */
+
+
+/* Cacher l’input natif */
+.hidden-toggle {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Conteneur du switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+}
+
+/* La barre (fond) */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+/* Le rond */
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+/* Quand c’est activé */
+.hidden-toggle:checked + .slider {
+  background-color: var(--teal);
+}
+
+/* Rond déplacé à droite */
+.hidden-toggle:checked + .slider::before {
+  transform: translateX(22px);
+}
+
+/* Texte à côté */
+.toggle-label {
+  margin-left: 10px;
+  font-size: 14px;
+  color: var(--text);
+  vertical-align: middle;
+}
+.slider.active {
+    background-color: var(--teal);
+}
+
+.slider.active::before {
+    transform: translateX(22px);
+}

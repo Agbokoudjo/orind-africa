@@ -1,0 +1,6 @@
+status:
+    active: Active
+    inactive: Inactive
+toggle_account:
+    active: 'Your %name_site% account has been activated'
+    inactive: 'Your %name_site% account has been deactivated'

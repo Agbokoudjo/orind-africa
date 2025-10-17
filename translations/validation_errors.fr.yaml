@@ -1,0 +1,1 @@
+reservedRoles: Le nom de rôle "{{ value }}" est réservé et ne peut pas être créé.

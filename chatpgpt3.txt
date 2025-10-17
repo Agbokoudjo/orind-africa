@@ -1,0 +1,95 @@
+Très bonne remarque 👍, tu touches à un sujet central en DDD / clean architecture : **où placer les abstractions liées à la messagerie (Mailer, Message, async)**.
+
+---
+
+### 📌 Rappel des règles DDD
+
+* La **couche Domain** ne doit pas dépendre de Symfony Mailer, Messenger, ni aucun framework.
+* La **couche Application** orchestre les cas d’usage (UseCases). Elle peut dire *"envoie un mail"* ou *"publie un message async"*, mais sans savoir **comment** ça marche.
+* La **couche Infrastructure** fait le vrai boulot : implémenter le Mailer avec `Symfony\Component\Mailer`, envoyer le message dans RabbitMQ ou Doctrine, etc.
+
+---
+
+### 🏗️ Organisation possible
+
+#### 1. Créer une abstraction de mailer dans **Application**
+
+👉 Exemple :
+`/src/Application/Service/MailerInterface.php`
+
+```php
+namespace App\Application\Service;
+
+interface MailerInterface
+{
+    public function send(MailMessageInterface $message): void;
+}
+```
+
+Et l’abstraction du message :
+
+```php
+namespace App\Application\Service;
+
+interface MailMessageInterface
+{
+    public function getSubject(): string;
+    public function getBody(): string;
+    public function getRecipients(): array;
+}
+```
+
+#### 2. Implémentation dans **Infrastructure**
+
+👉 Exemple :
+`/src/Infrastructure/Mailer/SymfonyMailerAdapter.php`
+
+```php
+namespace App\Infrastructure\Mailer;
+
+use App\Application\Service\MailerInterface;
+use App\Application\Service\MailMessageInterface;
+use Symfony\Component\Mailer\MailerInterface as SymfonyMailer;
+use Symfony\Component\Mime\Email;
+
+final class SymfonyMailerAdapter implements MailerInterface
+{
+    public function __construct(private SymfonyMailer $mailer) {}
+
+    public function send(MailMessageInterface $message): void
+    {
+        $email = (new Email())
+            ->to(...$message->getRecipients())
+            ->subject($message->getSubject())
+            ->text($message->getBody());
+
+        $this->mailer->send($email);
+    }
+}
+```
+
+#### 3. Async avec Messenger
+
+Si tu veux que l’envoi se fasse en **asynchrone**, tu peux :
+
+* Définir une commande / événement dans Application (`UserRegisteredEvent`)
+* Le publier dans un **EventBusInterface** (toujours Application)
+* L’implémenter avec **Messenger** dans Infrastructure.
+
+---
+
+### 🚀 Résumé clair
+
+* **Application** : définit `MailerInterface`, `MailMessageInterface`, `EventBusInterface`
+* **Domain** : ne connaît rien du mail, mais peut lever des événements métiers (`UserRegisteredEvent`)
+* **Infrastructure** : implémente le Mailer (Symfony Mailer, AWS SES, Postmark, etc.) et le bus async (Messenger, RabbitMQ, Kafka).
+
+---
+
+👉 Tu n’as pas besoin de créer une nouvelle *couche* pour ça.
+C’est de l’**Infrastructure** pur, mais l’abstraction reste dans **Application** pour que tes UseCases puissent l’utiliser.
+
+---
+
+Veux-tu que je te montre un exemple complet de **UseCase `RegisterUser` qui envoie un mail de bienvenue via ton abstraction Mailer** ?
+

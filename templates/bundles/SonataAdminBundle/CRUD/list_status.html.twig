@@ -1,0 +1,13 @@
+{% extends get_admin_template('base_list_field', admin.code) %}
+
+{% block field %}
+  {% set class_color = "badge-inactive" %}
+  {% set key_trans = 'status.inactive' %}
+
+  {% if value %}
+    {% set class_color = "badge-active" %}
+    {% set key_trans = 'status.active' %}
+  {% endif %}
+
+  <span class="badge {{ class_color }} h4">{{ key_trans|trans({},'status',app.locale) }}</span>
+{% endblock %}

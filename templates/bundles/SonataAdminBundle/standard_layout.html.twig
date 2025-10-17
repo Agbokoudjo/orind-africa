@@ -1,0 +1,124 @@
+{% extends '@!SonataAdmin/standard_layout.html.twig' %}
+{% block html_attributes %}
+    {{ parent() }}
+    data-turbo="false"
+{% endblock %}
+{% block favicon %}
+     <link rel="icon" href="{{asset('images/logo.jpg')}}">
+{% endblock %}
+ {% block stylesheets %}
+   {{ parent() }}
+    <link rel="stylesheet" href="{{asset('styles/admin.css')}}"> 
+    <link rel="stylesheet" href="{{asset('styles/dropzone.css')}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.23.0/dist/sweetalert2.min.css">
+ {% endblock %}
+ {% block javascripts %}
+    {{ parent() }}
+   {% block importmap %}{{ importmap('admin') }}{% endblock %}
+ {% endblock %}
+{% block sonata_header %}
+                  <nav class="app-header navbar navbar-expand shadow" id="app-header">
+                        {% block sonata_header_noscript_warning %}
+                            <noscript>
+                                <div class="noscript-warning">
+                                    {{ 'noscript_warning'|trans({}, 'SonataAdminBundle') }}
+                                </div>
+                            </noscript>
+                        {% endblock %}
+                        {% block sonata_nav %}
+                              <div class="container-fluid" {{ stimulus_target('sonata-sticky', 'topNavbar') }}>
+                                    <ul class="navbar-nav">
+                                         <li class="nav-item">
+                                            <a class="nav-link sidebar-toggle btn btn-sidebar" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
+                                        </li>
+                                        {% block sonata_breadcrumb %}
+                                            {% if _breadcrumb is not empty or action is defined %}
+                                                <li class="nav-item hidden-xs">
+                                                    <ol class="nav navbar-top-links breadcrumb">
+                                                        {% if _breadcrumb is empty %}
+                                                            {% if action is defined %}
+                                                                {{ render_breadcrumbs(admin, action) }}
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {{ _breadcrumb|raw }}
+                                                        {% endif %}
+                                                    </ol>
+                                                 </li>
+                                                {% endif %}
+                                        {% endblock %} {# endblock sonata_breadcrumb #}
+                                    </ul>
+                                    {% if sonata_config.getOption('search') %}
+                                         {% block sonata_header_search %}
+                                            <ul class="navbar-nav ms-auto">
+                                                <li class="nav-item">
+                                                    <div class="navbar-search-block">
+                                                        <form class="d-flex navbar-search" 
+                                                            action="{{ path('sonata_admin_search') }}" 
+                                                            method="GET" 
+                                                            id="navbar-search"
+                                                            role="search">
+                                                            <div class="input-group">
+                                                                <input type="search" 
+                                                                    name="q" 
+                                                                    value="{{ app.request.get('q') }}" 
+                                                                    class="form-control form-control-navbar" 
+                                                                    placeholder="{{ 'search_placeholder'|trans({}, 'SonataAdminBundle') }}" 
+                                                                    aria-label="Search">
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-navbar" type="submit">
+                                                                        <i class="bi bi-search"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-navbar" type="reset"
+                                                                            data-widget="navbar-search"
+                                                                            form="navbar-search"
+                                                                            >
+                                                                        <i class="bi bi-x-lg"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                         {% endblock %} {# endblock  sonata_header_search  #}   
+                                    {% endif %}    
+                                    {% block sonata_top_nav_menu %}
+                                        <ul class="navbar-nav ms-auto">
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                                                    <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                                                    <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+                                                </a>
+                                            </li>
+                                            {% block sonata_top_nav_menu_add_block %}
+                                                {% set addBlock = include(get_global_template('add_block')) %}
+                                                {% if addBlock|trim is not empty %}
+                                                    <li class="nav-item dropdown">
+                                                        <a class="dropdown-toggle nav-link" data-bs-toggle="dropdown" href="#">
+                                                            <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i> <i class="fas fa-caret-down" aria-hidden="true"></i>
+                                                        </a>
+                                                        {{ addBlock|raw }}
+                                                    </li>
+                                                {% endif %}
+                                            {% endblock %} {# endblock sonata_top_nav_menu_add_block #}
+                                            {% if app.user %}
+                                                {% block sonata_top_nav_menu_user_block %}
+                                                    {% set userBlock = include(get_global_template('user_block')) %}
+                                                    {% if userBlock|trim is not empty %}
+                                                        <li class="nav-item  dropdown user-menu dropdown-menu-lg dropdown-menu-end">
+                                                             {{ userBlock|raw }}
+                                                        </li>
+                                                    {% endif %}
+                                                {% endblock %} {# endblock sonata_top_nav_menu_user_block #}
+                                            {% endif %}
+                                        </ul>
+                                    {% endblock %} {# endblock sonata_top_nav_menu #}
+                              </div>
+                        {% endblock %} {# endblock  sonata_nav #}
+                  </nav>
+             {% endblock %} {# endblock sonata_header #}
+
+
+
+ 
+

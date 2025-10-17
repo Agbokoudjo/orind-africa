@@ -1,0 +1,11 @@
+email:
+  label: Email
+  contraint_email: Veuillez saisir un email valide.
+  not_blank: Veuillez saisir votre email.
+  placeholder: Votre adresse electronique
+password:
+  label: Mot de passe
+  not_blank: Veuillez saisir votre mot de passe.
+  placeholder: Mot de passe
+remember_me:
+  label: Se souvenir de moi

@@ -1,0 +1,334 @@
+Top, on va poser une architecture **claire et robuste** pour informer tes utilisateurs (membres, ministres, admins) en temps réel (back-office + push) avec des **fallbacks email/SMS**.
+
+# Objectif
+
+1. **En ligne dans le back-office** → notif temps réel via **Mercure** (badge header).
+2. **Hors ligne (pas connecté au BO)** → **Email** et/ou **SMS**.
+3. **Appareil connecté mais site fermé** → **Web Push** (style YouTube), via Service Worker.
+
+---
+
+# Flux d’événements (DDD + Clean Architecture)
+
+1. **Domaine** publie un événement :
+
+   * `UserPromotedToMinisterEvent`
+   * `MinisterPromotedToSuperAdminEvent`
+
+2. **Application** écoute ces événements et déclenche le **UseCase** `NotifyUserOnRoleChangeUseCase`.
+
+3. Le UseCase :
+
+   * crée un **Notification** (aggregate) → « payload » commun (title, body, type, severity, data).
+   * envoie une **commande** au **NotificationOrchestrator** (port d’application) pour diffuser sur les canaux nécessaires.
+
+4. **NotificationOrchestrator** (Application, port) :
+
+   * Vérifie la **présence** (est-ce que l’utilisateur a une session admin active ?).
+   * Publie via **Mercure** si session active.
+   * En parallèle, **programme** Email/SMS/WebPush via **Messenger (async)**.
+   * Persiste la notification (pour l’historique + badge non lus).
+
+---
+
+# Modèle minimal (Domain)
+
+```php
+// Domain/Notification/Notification.php
+final class Notification
+{
+    public function __construct(
+        public string $id,
+        public string $userId,
+        public string $title,
+        public string $body,
+        public string $type,        // promotion, security, system…
+        public string $severity,    // info, success, warning, error
+        public array  $data = [],   // { targetUrl: '/admin/...' }
+        public \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
+        public bool $read = false
+    ) {}
+}
+```
+
+---
+
+# Ports d’Application (interfaces)
+
+```php
+// Application/Port/Presence/PresenceCheckerInterface.php
+interface PresenceCheckerInterface {
+    public function isBackofficeOnline(string $userId): bool;
+}
+
+// Application/Port/Realtime/RealtimePublisherInterface.php  (Mercure)
+interface RealtimePublisherInterface {
+    public function publish(string $userId, array $payload): void;
+}
+
+// Application/Port/Push/WebPushInterface.php
+interface WebPushInterface {
+    public function send(string $userId, string $title, string $body, array $data = []): void;
+}
+
+// Application/Port/NotificationStoreInterface.php (historique + non-lus)
+interface NotificationStoreInterface {
+    public function save(Notification $notif): void;
+    /** @return Notification[] */
+    public function findUnreadFor(string $userId): array;
+    public function markAsRead(string $userId, string $notificationId): void;
+}
+
+// Application/Port/Out/MailerInterface.php & SmsInterface.php
+interface MailerInterface { public function send(string $to, string $subject, string $html): void; }
+interface SmsInterface { public function send(string $to, string $text): void; }
+```
+
+---
+
+# Orchestrateur (Application)
+
+```php
+final class NotificationOrchestrator
+{
+    public function __construct(
+        private PresenceCheckerInterface $presence,
+        private RealtimePublisherInterface $realtime,
+        private WebPushInterface $webpush,
+        private MailerInterface $mailer,
+        private SmsInterface $sms,
+        private NotificationStoreInterface $store,
+        private UserReadModelInterface $users // email, phone, locale, push subscriptions…
+    ) {}
+
+    public function notifyRoleChange(string $userId, string $title, string $body, array $data = []): void
+    {
+        $notif = new Notification(bin2hex(random_bytes(8)), $userId, $title, $body, 'promotion', 'success', $data);
+        $this->store->save($notif);
+
+        // 1) Temps réel si connecté au BO
+        if ($this->presence->isBackofficeOnline($userId)) {
+            $this->realtime->publish($userId, [
+                'id' => $notif->id,
+                'title' => $title,
+                'body' => $body,
+                'data' => $data,
+                'createdAt' => $notif->createdAt->format(DATE_ATOM),
+            ]);
+        }
+
+        // 2) Web Push (notification système)
+        $this->webpush->send($userId, $title, $body, $data);
+
+        // 3) Fallback Email / SMS (async via Messenger)
+        $user = $this->users->getById($userId);
+        if ($user->email) {
+            // rendre HTML via Twig en Infra
+            $this->mailer->send($user->email, $title, /* html */ '');
+        }
+        if ($user->phone) {
+            $this->sms->send($user->phone, $body);
+        }
+    }
+}
+```
+
+> **Note** : En pratique, envoie **email/SMS/push** via **Messenger** (handlers async) pour ne pas bloquer.
+
+---
+
+# Règles de diffusion (matrice)
+
+| Contexte utilisateur | Mercure (in-app) | Web Push | Email  | SMS    |
+| -------------------- | ---------------- | -------- | ------ | ------ |
+| Connecté BO          | ✅ immédiat       | ✅        | option | option |
+| Déconnecté BO        | ❌                | ✅        | ✅      | option |
+| Navigateur fermé     | ❌                | ✅        | ✅      | option |
+
+---
+
+# Infrastructure – Adapters
+
+1. **PresenceChecker** : garde en mémoire les sessions actives back-office (Redis/sessions).
+
+   * Mise à jour via un **ping** JS (Stimulus) toutes 30s → `POST /api/presence`.
+
+2. **MercurePublisher** : publie sur un **topic par user** `user/{id}/notifications` en JWT (claim `mercure: { publish: [...] }`).
+
+3. **WebPush** :
+
+   * Stocker les **subscriptions** (endpoint, keys) côté DB par user.
+   * Service Worker (`service-worker.js`) + **Push API** (Minishlink/web-push).
+   * Adapter `WebPushInterface` → envoie aux endpoints enregistrés.
+
+4. **MailerAdapter** : `Symfony\Component\Mailer` + **Twig** pour templating (locale-aware).
+
+5. **SmsAdapter** : Notifier (Twilio/OVH/MessageBird…), via `symfony/notifier`.
+
+6. **NotificationStore** : table `notifications` + `user_notifications` (read/unread).
+
+7. **Messenger** :
+
+   * Routage des messages `SendEmailMessage`, `SendSmsMessage`, `SendWebPushMessage` vers un **transport async** (Doctrine transport, Redis, RabbitMQ, SQS…).
+
+---
+
+# Back-office : header + badge (Mercure + Stimulus)
+
+**Twig (navbar)**
+
+```twig
+<div data-controller="notif"
+     data-notif-user-id-value="{{ app.user.id }}"
+     data-notif-mercure-url-value="{{ mercure_hub_url() }}"
+     data-notif-topic-value="{{ 'user/' ~ app.user.id ~ '/notifications' }}">
+  <button class="btn btn-icon">
+    <i class="fas fa-bell"></i>
+    <span class="badge" data-notif-target="badge">{{ unread_count }}</span>
+  </button>
+  <div class="dropdown" data-notif-target="list"></div>
+</div>
+```
+
+**Stimulus controller (notif\_controller.js)**
+
+```js
+import { Controller } from '@hotwired/stimulus';
+
+export default class extends Controller {
+  static values = { userId: String, mercureUrl: String, topic: String }
+  static targets = ['badge','list']
+
+  connect() {
+    const url = new URL(this.mercureUrlValue);
+    url.searchParams.append('topic', this.topicValue);
+
+    this.es = new EventSource(url, { withCredentials: true });
+    this.es.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      this.bumpBadge();
+      this.prependItem(data);
+    };
+
+    // présence (keep-alive)
+    this.ping = setInterval(() => {
+      fetch('/api/presence', { method: 'POST', headers: { 'X-User': this.userIdValue }});
+    }, 30000);
+  }
+
+  disconnect() {
+    this.es?.close();
+    clearInterval(this.ping);
+  }
+
+  bumpBadge() {
+    const n = parseInt(this.badgeTarget.textContent || '0', 10) + 1;
+    this.badgeTarget.textContent = n;
+  }
+
+  prependItem(data) {
+    const el = document.createElement('div');
+    el.className = 'notif-item';
+    el.innerHTML = `<strong>${data.title}</strong><br>${data.body}`;
+    this.listTarget.prepend(el);
+  }
+}
+```
+
+---
+
+# Web Push (style YouTube)
+
+1. **Consentement** + abonnement :
+
+   * Bouton « Activer les notifications ».
+   * JS : `Notification.requestPermission()` → `registration.pushManager.subscribe(...)`.
+
+2. **Service Worker** (`/service-worker.js`) :
+
+```js
+self.addEventListener('push', event => {
+  const data = event.data?.json() ?? {};
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'Notification', {
+      body: data.body,
+      data: data.data || {},
+      icon: '/icon.png',
+      badge: '/badge.png',
+    })
+  );
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const url = event.notification.data?.targetUrl || '/admin';
+  event.waitUntil(clients.openWindow(url));
+});
+```
+
+3. **Backend** : stocker `endpoint`, `p256dh`, `auth` par user, et implémenter `WebPushInterface`.
+
+---
+
+# Emails (Twig + locale)
+
+* Adapter **Mailer** qui rend :
+  `emails/notifications/promotion.{locale}.html.twig`
+* Le **locale provider** (déjà prévu) fournit la langue.
+
+---
+
+# Messenger (async)
+
+`messenger.yaml` (idée) :
+
+```yaml
+framework:
+  messenger:
+    transports:
+      async: '%env(MESSENGER_TRANSPORT_DSN)%'
+    routing:
+      App\Infrastructure\Message\SendEmailMessage: async
+      App\Infrastructure\Message\SendSmsMessage: async
+      App\Infrastructure\Message\SendWebPushMessage: async
+```
+
+Handlers :
+
+* `SendEmailMessageHandler` → Twig + Mailer
+* `SendSmsMessageHandler` → Notifier/SMS
+* `SendWebPushMessageHandler` → WebPush adapter
+
+---
+
+# Sécurité & per-user topics (Mercure)
+
+* **Topic** : `user/{id}/notifications`
+* **JWT Mercure** : add claim `subscribe: ["user/{id}/notifications"]` et **publish** pour le serveur.
+* Vérifie que **seul l’utilisateur** (ou un admin) peut s’abonner à son topic.
+
+---
+
+# Résilience & UX
+
+* Si **Mercure** échoue → les notifs restent en base → badge non lus au rechargement.
+* **Web Push** silencieux si pas de permission.
+* **Email/SMS** en **fallback** uniquement (pour limiter les coûts).
+* Ajoute un **centre de notifications** (page) avec pagination, filtres, « Marquer tout comme lu ».
+
+---
+
+# Roadmap d’implémentation (ordre conseillé)
+
+1. **NotificationStoreInterface** + table `notifications`.
+2. **PresenceChecker** (API + ping frontend).
+3. **MercurePublisher** + header Stimulus (badge).
+4. **Mailer** (Twig + Messenger).
+5. **Web Push** (Service Worker, abonnement, envoi).
+6. **SMS** si nécessaire.
+7. **Policies** (qui reçoit quoi selon rôle/domaine ministériel).
+
+---
+
+Si tu veux, je te fournis les **signatures exactes** des messages Messenger (`SendEmailMessage`, `SendWebPushMessage`) et un **exemple de template Twig** pour l’email de promotion.
+

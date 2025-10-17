@@ -1,0 +1,43 @@
+{% extends "base.html.twig" %}
+{% block title %}ORIND-Africa – Accès Administration{% endblock %}
+{% block body %}
+    <main class="card" role="main" aria-labelledby="title">
+    <div class="header">
+      <span class="badge"><span class="dot" aria-hidden="true"></span> ORIND-Africa • Accès sécurisé</span>
+      <h1 id="title">Espace d’administration</h1>
+      <p class="lead">
+        Bienvenue sur la passerelle interne d’ORIND-Africa. Cliquez sur le bouton ci-dessous pour rejoindre le
+        back-office Sonata (connexion requise).
+      </p>
+    </div>
+
+    <div class="content">
+      <div class="actions">
+        <a id="adminLink" class="btn" href="#">
+          Accéder à l’espace d’administration
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M13.5 4H20v6.5h-2V7.41l-8.29 8.3-1.42-1.42 8.3-8.29H13.5V4zM20 20H4V4h6v2H6v12h12v-4h2v6z"/>
+          </svg>
+        </a>
+        <button id="copyBtn" class="btn ghost" type="button">Copier l’URL d’accès</button>
+      </div>
+
+      <div class="info" id="infoBox">
+        <strong>Info :</strong> ce lien pointe automatiquement vers <code>/admin</code> sur le domaine actuel
+        (<span id="hostLabel"></span>). Partagez directement l’URL si vous utilisez <em>ngrok</em>.
+      </div>
+
+      <div class="meta" aria-label="Métadonnées">
+        <span class="pill">Symfony 7.3 • Sonata 5.x</span>
+        <span class="pill">HTTPS activé</span>
+        <span class="pill">Accès restreint</span>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="logo"><span class="logo-mark" aria-hidden="true"></span> ORIND-Africa</div>
+      <div class="hint">Besoin d’aide ? Écrivez à l’administrateur.</div>
+    </div>
+  </main>
+
+{% endblock %}

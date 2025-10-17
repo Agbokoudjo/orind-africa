@@ -1,20 +1,85 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    router.request_context.scheme: 'https'
+    asset.request_context.secure: true
+    NAME_SITE: "ORIND AFRICA"
+    app.admin_user.class: App\Infrastructure\Doctrine\Entity\User\AdminUser
+    dkim_key: '%env(resolve:default::MAILER_DKIM)%'
+    app.mail.from:
+    system:
+        address: '%env(APP_MAIL_FROM_SYSTEM)%'
+        name: '%env(APP_MAIL_FROM_SYSTEM_NAME)%'
+    support:
+        address: '%env(APP_MAIL_FROM_SUPPORT)%'
+        name: '%env(APP_MAIL_FROM_SUPPORT_NAME)%'
+    notification:
+        address: '%env(APP_MAIL_FROM_NOTIF)%'
+        name: '%env(APP_MAIL_FROM_NOTIF_NAME)%'
+
+    SONATA_ADMIN_AUTHOR_BACK_OFFICE:
+        EMAIL: internationaleswebservices@gmail.com
+        USERNAME: AGBOKOUDJO Hounha Franck
+
+   
 
 services:
-    # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
+        
+    App\Domain\User\Service\CanonicalFieldsUpdater: ~
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    App\Domain\User\Service\CanonicalFieldsUpdaterInterface:
+        alias: App\Domain\User\Service\CanonicalFieldsUpdater
+    
+    #TranslatorInterface
+    App\Application\Service\TranslatorInterface:
+        alias: App\Infrastructure\Translation\SymfonyTranslatorAdapter
+    
+    #Mailer
+    App\Infrastructure\Service\Mailing\SystemMailer:
+        arguments:
+            $fromAddresses: '%app.mail.from%'
+            $dkimKey: '%dkim_key%'
+    #Security
+    security.acl.permission.map:
+        class: Sonata\AdminBundle\Security\Acl\Permission\AdminPermissionMap
+
+    App\Application\Service\Authorization\AuthorizationCheckerForUser:
+        arguments:
+            $userPermissionRoleRepo: '@App\Domain\Security\UserPermissionRoleRepositoryInterface'
+
+    # on lie l’interface à l’implémentation
+    App\Application\Service\Authorization\AuthorizationCheckerForUserInterface:
+        alias: App\Application\Service\Authorization\AuthorizationCheckerForUser
+
+    #Manager and Persistance
+    App\Infrastructure\Persistance\AdminUserManager:
+        tags: ['app.user_manager']
+     #Manager and Persistance
+    App\Infrastructure\Persistance\MemberUserManager:
+        tags: ['app.user_manager']
+    #ManagerRegistry
+    App\Infrastructure\Service\UserManagerRegistry:
+        arguments:
+            - !tagged_iterator app.user_manager
+
+    App\Infrastructure\Security\RolesBuilder\SecurityRolesBuilder:
+        arguments:
+            $authorizationChecker: '@security.authorization_checker'
+            $configuration: '@sonata.admin.configuration'   # <── alias
+            $translator: '@translator'
+            $rolesHierarchy: '%security.role_hierarchy.roles%'
+
+    App\Infrastructure\Security\RolesBuilder\ExpandableRolesBuilderInterface:
+        alias: App\Infrastructure\Security\RolesBuilder\SecurityRolesBuilder
+    App\Infrastructure\Security\RolesBuilder\AdminRolesBuilder:
+        arguments:
+            $authorizationChecker: '@security.authorization_checker'
+            $pool: '@sonata.admin.pool'
+            $configuration: '@sonata.admin.configuration'   # <── alias
+            $translator: '@translator'
+
+    

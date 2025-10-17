@@ -16,6 +16,10 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
+    'admin' => [
+        'path' => './assets/admin.js',
+        'entrypoint' => true,
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],
@@ -24,5 +28,33 @@ return [
     ],
     '@hotwired/turbo' => [
         'version' => '7.3.0',
+    ],
+    '@wlindabla/form_validator' => [
+        'version' => '2.0.1',
+    ],
+    'libphonenumber-js' => [
+        'version' => '1.12.9',
+    ],
+    'image-validator' => [
+        'version' => '1.2.1',
+    ],
+    'papaparse' => [
+        'version' => '5.5.3',
+    ],
+    'pdfjs-dist' => [
+        'version' => '5.3.93',
+    ],
+    'xlsx' => [
+        'version' => '0.18.5',
+    ],
+    'animate.css' => [
+        'version' => '4.1.1',
+    ],
+    'animate.css/animate.min.css' => [
+        'version' => '4.1.1',
+        'type' => 'css',
+    ],
+    'sweetalert2' => [
+        'version' => '11.23.0',
     ],
 ];

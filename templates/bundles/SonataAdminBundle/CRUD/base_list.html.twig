@@ -1,0 +1,5 @@
+{% extends '@!SonataAdmin/CRUD/base_list.html.twig' %}
+
+{% block list_header %}
+  {% if admin.labelList  is defined %} {{admin.labelList}} {% endif %}
+{% endblock %}

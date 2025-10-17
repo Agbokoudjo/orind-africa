@@ -1,0 +1,11 @@
+forms:
+  with_generale: Contenu
+  label_domain_name: Nom du domaine
+  label_domain_description: Description de la  mission du domaine 
+  label_domain_handler: Gestion
+  label_minister_handler: Choisissez le ministre qui va gerer le domaine
+  #groupe action
+  label_group_description: Description de la  mission du groupe
+  label_group_name: Nom du groupe
+  label_group_domain_action: Associez un domaine d'action 
+  label_group_members: Choisissez les membres du groupe

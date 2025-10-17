@@ -1,14 +1,128 @@
 security:
+    access_decision_manager:
+        strategy: unanimous
+
+    role_hierarchy:
+        ROLE_SUPER_ADMIN: 
+            - ROLE_FOUNDER
+
+        ROLE_FOUNDER: 
+            - ROLE_COFOUNDER
+            #PERMISSION_ROTE
+            - ROLE_SONATA_ADMIN_PERMISSION_ROLE_CREATE
+            - ROLE_SONATA_ADMIN_PERMISSION_ROLE_EXPORT
+            #USER_PROMOTION
+            - ROLE_SONATA_ADMIN_USER_PERMISSION_ROLE_CREATE
+            - ROLE_SONATA_ADMIN_USER_PERMISSION_ROLE_EDIT 
+            - ROLE_SONATA_ADMIN_USER_PERMISSION_ROLE_EXPORT
+            
+            #USER_ADMIN
+            - ROLE_SONATA_ADMIN_USER_ADMIN_CREATE
+            - ROLE_SONATA_ADMIN_USER_ADMIN_DELETE
+            - ROLE_SONATA_ADMIN_USER_ADMIN_EXPORT
+            #USER_MEMBER
+            - ROLE_SONATA_ADMIN_USER_MEMBER_CREATE
+            - ROLE_SONATA_ADMIN_USER_MEMBER_DELETE
+            - ROLE_SONATA_ADMIN_USER_MEMBER_EXPORT
+            - ROLE_SONATA_ADMIN_USER_MEMBER_EDIT
+            # DOMAIN_ACTION
+            - ROLE_SONATA_ADMIN_DOMAIN_ACTION_EDIT
+            - ROLE_SONATA_ADMIN_DOMAIN_ACTION_CREATE
+            - ROLE_SONATA_ADMIN_DOMAIN_ACTION_DELETE
+            - ROLE_SONATA_ADMIN_DOMAIN_ACTION_EXPORT
+            #GROUP ACTION
+            - ROLE_SONATA_ADMIN_GROUP_ACTION_EXPORT
+            - ROLE_SONATA_ADMIN_GROUP_ACTION_VIEW 
+
+            #Le fondateur a le droit d'editer le profile de tous le monde a l'exeption de quelquel 
+            #champs
+
+        ROLE_COFOUNDER: 
+            - ROLE_ADMIN
+
+        ROLE_MINISTER:
+            - ROLE_GROUP_MANAGER
+            #Permission
+            - ROLE_SONATA_ADMIN_PERMISSION_ROLE_CREATE
+            #USER_PROMOTION_ROLE
+            - ROLE_SONATA_ADMIN_USER_PERMISSION_ROLE_CREATE
+            - ROLE_SONATA_ADMIN_USER_PERMISSION_ROLE_EDIT 
+            #GROUP ACTION
+            - ROLE_SONATA_ADMIN_GROUP_ACTION_CREATE
+            - ROLE_SONATA_ADMIN_GROUP_ACTION_DELETE
+            - ROLE_SONATA_ADMIN_GROUP_ACTION_EXPORT
+            - ROLE_SONATA_ADMIN_GROUP_ACTION_VIEW 
+            - ROLE_SONATA_ADMIN_GROUP_ACTION_EDIT 
+            
+        ROLE_ADMIN: 
+        #SONATA_ADMIN_USER_ADMIN
+            - ROLE_SONATA_ADMIN_USER_ADMIN_LIST  
+            - ROLE_SONATA_ADMIN_USER_ADMIN_VIEW
+            - ROLE_SONATA_ADMIN_USER_ADMIN_EDIT 
+
+        #UUSER_MEMBER
+            - ROLE_SONATA_ADMIN_USER_MEMBER_LIST  
+            - ROLE_SONATA_ADMIN_USER_MEMBER_VIEW
+           
+        #DOMAIN_ACTION
+            - ROLE_SONATA_ADMIN_DOMAIN_ACTION_LIST 
+            - ROLE_SONATA_ADMIN_DOMAIN_ACTION_VIEW
+
+        #ROLE_SONATA_ADMIN_PERMISSION_ROLE
+            - ROLE_SONATA_ADMIN_PERMISSION_ROLE_LIST
+            - ROLE_SONATA_ADMIN_PERMISSION_ROLE_VIEW 
+
+        #USER_PERMISSION_ROLE
+            - ROLE_SONATA_ADMIN_USER_PERMISSION_ROLE_VIEW 
+            - ROLE_SONATA_ADMIN_USER_PERMISSION_ROLE_LIST
+
+        #GROUP ACTION
+            - ROLE_SONATA_ADMIN_GROUP_ACTION_LIST
+
+        ROLE_GROUP_MANAGER:
+
+        #USER_MEMBER
+        ROLE_MEMBER:
+            - ROLE_SONATA_ADMIN_USER_MEMBER_EDIT
+            - ROLE_SONATA_ADMIN_USER_MEMBER_LIST
+            - ROLE_SONATA_ADMIN_USER_MEMBER_VIEW
+
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         users_in_memory: { memory: null }
+        admin_user_provider:
+             id: App\Infrastructure\Security\AdminUserProvider
+        member_user_provider:
+             id: App\Infrastructure\Security\MemberUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        admin:
+            context: user
+            security: true
+            lazy: true
+            pattern: /admin(.*)
+            provider: admin_user_provider
+            form_login:
+                 username_parameter: email
+                 password_parameter: password
+                 enable_csrf: true
+                 login_path: app_admin_user_login
+                 check_path: app_admin_user_login
+                 default_target_path: sonata_admin_dashboard
+            remember_me:
+                secret: '%env(APP_SECRET)%'
+                lifetime: 2629746
+                path: /admin
+            logout:
+               path: sonata_user_admin_security_logout
+               target: sonata_user_admin_security_login
+               
+           
         main:
             lazy: true
             provider: users_in_memory
@@ -22,8 +136,10 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin_user/form/login$, role: PUBLIC_ACCESS }
+        - { path: ^/admin/*, roles: ROLE_ADMIN }
+        - { path: ^/profile, roles: ROLE_SUPER_ADMIN }
+        - { path: ^/user/logout$, role: PUBLIC_ACCESS }
 
 when@test:
     security:
