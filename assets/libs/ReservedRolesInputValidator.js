@@ -10,7 +10,7 @@
  * For more information, please feel free to contact the author.
  */
 
-import { FormError } from '@wlindabla/form_validator';
+import { AbstractFieldValidator } from '@wlindabla/form_validator';
 
 /**
  * @typedef {Object} ReservedRolesConfig
@@ -28,9 +28,9 @@ export const ReservedRolesDefaults = {
 /**
  * Validateur de rôle réservé.
  * Étend la classe de base FormError pour la gestion des messages et de l'état.
- * * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
+ * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
  */
-export class ReservedRolesInputValidator extends FormError {
+export class ReservedRolesInputValidator extends AbstractFieldValidator {
 
     /** @type {ReservedRolesInputValidator} */
     static #instance = null; 
@@ -58,13 +58,13 @@ export class ReservedRolesInputValidator extends FormError {
      * @returns {ReservedRolesInputValidator} Retourne l'instance (this) en cas de succès, ou le résultat de setValidatorStatus en cas d'erreur.
      */
     validate(value_input, targetInputname, options) {
-
+        this.formErrorStore.clearFieldState(targetInputname);
         const { reservedRoles } = options;
         const roleName = value_input.toUpperCase(); 
 
         if (reservedRoles.includes(roleName)) { 
 
-            return this.setValidatorStatus(
+            return this.setValidationState(
                 false,
                 `Le nom de rôle "${roleName}" est réservé et ne peut pas être créé.`,
                 targetInputname

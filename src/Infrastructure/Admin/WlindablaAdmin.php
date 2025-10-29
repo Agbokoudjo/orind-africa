@@ -16,7 +16,6 @@ namespace App\Infrastructure\Admin;
 
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
-use Symfony\Bundle\SecurityBundle\Security;
 use Sonata\AdminBundle\Datagrid\DatagridInterface;
 
 /**

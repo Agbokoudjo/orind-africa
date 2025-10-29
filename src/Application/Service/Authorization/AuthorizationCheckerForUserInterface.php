@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Authorization;
 
-use App\Domain\User\BaseUserInterface;
+use App\Domain\User\Model\BaseUserInterface;
 
 /**
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>

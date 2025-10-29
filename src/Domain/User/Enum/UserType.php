@@ -24,6 +24,7 @@ enum UserType:string{
     case ADMIN  = 'admin';
     case MEMBER = 'member';
     case SIMPLE   = 'simple';
+     case CLIENT   = 'client';
 
    public static function getValue(UserType $userType):string{
 

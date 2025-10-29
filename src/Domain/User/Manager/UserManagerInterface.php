@@ -15,10 +15,11 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Manager;
 
-use App\Domain\User\BaseUserInterface;
 use App\Domain\Manager\ManagerCRUDInterface;
+use App\Domain\User\Model\BaseUserInterface;
 
 interface UserManagerInterface extends ManagerCRUDInterface{
+
      public function updatePassword(BaseUserInterface $user): void;
 
     public function findUserByUsername(string $username): ?BaseUserInterface;
@@ -28,4 +29,8 @@ interface UserManagerInterface extends ManagerCRUDInterface{
     public function findUserByUsernameOrEmail(string $usernameOrEmail): ?BaseUserInterface;
 
     public function findUserByConfirmationToken(string $token): ?BaseUserInterface;
+
+    public function findUserBySlug(string $slug):?BaseUserInterface ;
+
+    public function find(mixed $id): ?object ;
 }

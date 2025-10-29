@@ -16,10 +16,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Doctrine;
 
-use App\Domain\User\BaseUserInterface;
+use App\Domain\User\Model\BaseUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 interface CustomUserInterface extends BaseUserInterface,
     UserInterface,

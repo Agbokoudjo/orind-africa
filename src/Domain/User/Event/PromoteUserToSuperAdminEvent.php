@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Event;
 
-use App\Domain\User\AdminUserInterface;
+use App\Domain\User\Model\AdminUserInterface;
 
 /**
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
@@ -27,5 +27,6 @@ final readonly class PromoteUserToSuperAdminEvent
     public function __construct(
         private  AdminUserInterface $_user
     ) {}
+    
     public function getUser():AdminUserInterface{return $this->_user;}
 }

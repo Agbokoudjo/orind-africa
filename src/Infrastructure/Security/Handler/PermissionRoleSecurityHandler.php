@@ -19,10 +19,12 @@ final class PermissionRoleSecurityHandler extends AbstractRoleSecurityHandler im
 
     public function isGranted(AdminInterface $admin, string $attribute, ?object $object = null): bool
     {
-        if($object instanceof AdminInterface){
+        if($object instanceof AdminInterface ||  
+         (\is_string($attribute) && str_starts_with($attribute, 'ROLE_'))){
+           
             return $this->isGrantedRoleHierarchy($admin, $attribute, $object) ;
         }
-
+       
         /**
          * @var PermissionRoleVoter
          */

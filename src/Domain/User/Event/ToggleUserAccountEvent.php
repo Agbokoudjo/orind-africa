@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Event;
 
-use App\Domain\User\BaseUserInterface;
+use App\Domain\User\Model\BaseUserInterface;
 
 /**
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
@@ -25,10 +25,17 @@ use App\Domain\User\BaseUserInterface;
 final readonly class ToggleUserAccountEvent
 {
     public function __construct(
-        private BaseUserInterface $_user
+        private BaseUserInterface $_user,
+        private ?string $plainPasswordUser=null
     ) {}
+
     public function getUser(): BaseUserInterface
     {
         return $this->_user;
+    }
+
+    public function getPlainPassword():?string{
+
+        return $this->plainPasswordUser ;
     }
 }

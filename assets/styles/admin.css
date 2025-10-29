@@ -191,6 +191,7 @@
   --color-text-header:#fff;
 
   --color-text-nav-link-header:#fff ;
+  --color-action-list:#6c757d	/*rgb(108, 117, 125) */
 }
 .skip-links{
     display:none;
@@ -213,7 +214,17 @@
   border:2px solid inherit;
 }
 
+/* Cibler le conteneur du contenu principal */
+.content-wrapper {
+    overflow-x: hidden; /* Empêche le défilement horizontal */
+    width: 100%; /* S'assurer qu'il prend toute la largeur disponible */
+}
 
+/* S'assurer que les boîtes ne provoquent pas de débordement */
+.sonata-ba-view .box {
+    max-width: 100%; 
+    box-sizing: border-box; /* S'assurer que padding/border est inclus dans la width */
+}
 /* Le reste du code de votre sidebar (tel que vous l'avez fourni) */
 #app-sidebar .nav-item > .nav-link {
   color: var(--color-sidebar-text);
@@ -418,4 +429,269 @@ form label {
 
 .sonata-ba-form .tab-content{
   margin-top:20px ;
+}
+
+.container-div-error-message {
+    padding: 0.7rem;
+    border-radius: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.container-div-error-message {
+    background: #ffe6e6;
+    color: #b50000;
+    border: 1px solid #e5a4a4;
+    border-radius: 6px; 
+    transition: all 0.5s;
+    text-align: center; 
+    margin-top: 20px; 
+    padding: 10px;
+    width:100% ;
+}
+
+
+/* ======================================= */
+/* VUE "AFFICHER" (SHOW VIEW) STYLES       */
+/* ======================================= */
+
+/* Conteneur principal de la carte (Box) */
+.sonata-ba-view .box {
+    /* Utiliser le TEAL comme couleur d'accentuation en haut */
+    border-top: 3px solid var(--teal); 
+    border-radius: 6px; /* Des coins légèrement arrondis */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Ombre douce et moderne */
+    margin-bottom: 25px;
+    background-color: var(--bg-white); /* Fond blanc */
+    transition: all 0.3s ease; /* Transition légère pour un effet moderne */
+}
+
+/* En-tête de la carte (Titre du groupe) */
+.sonata-ba-view .box-header {
+    background-color: var(--light); /* Fond gris clair pour l'en-tête */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08); /* Séparateur très subtil */
+    padding: 15px 20px;
+}
+
+/* Titre du groupe */
+.sonata-ba-view .box-title {
+    color: var(--text); /* Couleur de texte sombre */
+    font-size: 1.15rem;
+    font-weight: 700; /* Plus audacieux */
+}
+
+/* Corps de la carte et table des champs */
+.sonata-ba-view .box-body table.table {
+    /* Style de table pour une liste descriptive */
+    margin: 0;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Style des lignes */
+.sonata-ba-view .box-body table.table tr {
+    border-bottom: 1px solid var(--light); /* Séparateur léger entre les lignes */
+}
+
+.sonata-ba-view .box-body table.table tr:last-child {
+    border-bottom: none; 
+}
+
+/* <th> : Le Label (Nom du champ) */
+.sonata-ba-view .box-body table.table th {
+    /* FOND GRIS CLAIR pour mettre en évidence le label */
+    background-color: var(--light); 
+    width: 30%; 
+    padding: 14px 25px; /* Plus d'espace vertical et horizontal */
+    font-weight: 600; 
+    color: var(--text);
+    text-align: left;
+    vertical-align: top;
+    text-transform: uppercase;
+    /* Ajouter un coin arrondi au label supérieur gauche pour la première ligne */
+    /* Vous devriez ajuster cette règle si elle pose problème d'héritage */
+}
+
+/* <td> : La Valeur du champ */
+.sonata-ba-view .box-body table.table td {
+    width: 70%;
+    padding: 14px 20px;
+    color: var(--text);
+    font-weight: 400;
+    vertical-align: top;
+    background-color: var(--bg-white);
+}
+
+/* Séparateur pour les lignes paires/impaires (optionnel, pour plus de contraste) */
+.sonata-ba-view .box-body table.table tbody tr:nth-of-type(even) th {
+    background-color: #e5e5eb; /* Une nuance légèrement plus foncée de --light */
+}
+
+/* Style des onglets (si présents) */
+.sonata-ba-view .nav-tabs-custom {
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Onglet actif */
+.sonata-ba-view .nav-tabs > li.active > a,
+.sonata-ba-view .nav-tabs > li.active > a:hover,
+.sonata-ba-view .nav-tabs > li.active > a:focus {
+    color: var(--teal); /* Couleur primaire sur l'onglet actif */
+    border-bottom: 3px solid var(--teal) !important;
+    background-color: var(--bg-white);
+    border-radius: 0;
+}
+
+/* Onglet inactif au survol */
+.sonata-ba-view .nav-tabs > li > a:hover {
+    color: var(--orange); /* Utilisation de l'orange comme couleur secondaire de survol */
+}
+
+/* Contenu des onglets */
+.sonata-ba-view .tab-content {
+    background-color: var(--bg-white);
+    border: none;
+    padding: 20px;
+    border-radius: 0 0 6px 6px;
+}
+
+/* ======================================= */
+/* MENU DÉROULANT DES ACTIONS (DROPDOWN)   */
+/* ======================================= */
+
+/* Style du conteneur du menu déroulant */
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu {
+    padding: 0;
+    margin-top: 5px;
+    border: 1px solid var(--light);
+    min-width: 180px;
+    border-radius: 0.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* Étape 1: Annuler le positionnement par défaut "à gauche" */
+    left: auto !important; 
+    
+    /* Étape 2: Forcer l'alignement sur l'extrémité droite du bouton parent */
+    right: 0 !important; 
+    
+    /* Le 'transform' de Bootstrap peut parfois interférer, nous le neutralisons pour garantir la position */
+    transform: none !important;
+}
+
+/* Style des éléments <li> du menu */
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu li {
+    border-bottom: 1px solid var(--light); /* Séparateur léger entre les actions */
+    margin-bottom: 1rem;
+    width:100%;
+}
+
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu li:last-child {
+    border-bottom: none;
+}
+
+/* Style des liens d'action (le contenu réel) */
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu a {
+    /* Le lien est un bouton/élément d'action */
+   align-content:center ;
+    padding: 10px 15px;
+    color: var(--text);
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+/* Icônes dans les actions */
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu a i.fas {
+    margin-right: 10px;
+    font-size: 1.1em;
+}
+
+/* Remplacer le ciblage i.fas par le ciblage SVG/Path */
+
+/* Icônes dans les actions (Conteneur SVG) */
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu a svg {
+    margin-right: 10px;
+    font-size: 1.1em;
+    width: 1em; /* Assurer une taille cohérente */
+    height: 1em;
+}
+
+/* Cibler le chemin (path) de l'icône pour changer la couleur */
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu a svg path {
+    fill: currentColor; /* Utilise la couleur du texte du lien <a> parent */
+    transition: fill 0.2s ease;
+}
+
+/* 1. Action Primaire (Ajouter/Créer) */
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu .btn-create,
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu .btn-create:hover,
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu .btn-add ,
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu .btn-add:hover{
+    /* Conservez ce style, il change la couleur du texte parent qui est utilisée par le SVG (currentColor) */
+    background-color: #4CAF50 !important;
+    color: var(--bg-white) !important;
+    font-weight: 700;
+    width:100%;
+    border-color:#4CAF50;
+}
+
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu .btn-show,
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu .btn-show:hover {
+   font-weight: bold;
+   background-color: var(--color-action-info);
+  color: var(--color-white);
+  width:100%;
+}
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu .btn-edit,
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu .btn-edit:hover{
+
+    background-color:var(--color-action-edit);
+    color: var(--color-white);
+    font-weight: bold; 
+    width:100%;
+}
+
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu .btn-list,
+.sonata-actions:not(.sonata-filter-container) .dropdown-menu .btn-list:hover{
+
+    background-color:var(--color-action-list);
+    color: var(--color-white);
+    font-weight: bold; 
+    width:100%;
+
+}
+
+.sonata-actions:not(.sonata-filter-container) .dropdown-toggle ,
+.sonata-actions:not(.sonata-filter-container) .dropdown-toggle:hover {
+    background-color: var(--orange) !important;
+    color: var(--bg-white) !important;
+    font-weight:bolder;
+    text-decoration:none;
+    border:1px solid var(--orange);
+    border-radius:3px;
+    text-align:center;
+    font-size:1.5rem;
+}
+
+form.sonata-filter-form .select.form-select.autocomplete_input {
+    width: 100% !important; 
+   display: block !important;
+   height: auto !important;
+} 
+
+form.sonata-filter-form .select2-container {
+    display: block !important; 
+    width: 100% !important;  
+    height: auto !important;
+     border: 1px solid #ccc;
+}
+
+form.sonata-filter-form .select2-container--bootstrap-5 .select2-selection {
+    min-height: 38px; /* Hauteur standard pour les contrôles de formulaire Bootstrap 5 */
+    border: 1px solid #ccc; /* Utiliser votre couleur de bordure */
+    border-radius: 4px;
+}
+
+form.sonata-filter-form .select2-container--bootstrap-5 .select2-selection__arrow {
+    height: 36px;
 }

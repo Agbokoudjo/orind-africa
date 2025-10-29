@@ -15,23 +15,17 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Admin;
 
-use App\Domain\User\AdminUserInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Symfony\Bundle\SecurityBundle\Security;
 use App\Infrastructure\Admin\WlindablaAdmin;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\ExpressionLanguage\Expression;
 use App\Infrastructure\Doctrine\Entity\User\AdminUser;
-use App\Infrastructure\Security\Voter\GroupActionVoter;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\UI\Http\Controller\Admin\GroupActionCRUDController;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use App\Infrastructure\Security\Handler\VoterSecurityHandler;
 use App\Infrastructure\Doctrine\Entity\Action\GroupActionEntity;
 use App\Infrastructure\Security\Handler\GroupActionSecurityHandler;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use App\Infrastructure\Doctrine\Entity\Action\DomainActionMinisterEntity;
 use App\Infrastructure\Doctrine\Entity\User\MemberUser;

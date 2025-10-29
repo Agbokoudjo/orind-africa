@@ -5,7 +5,7 @@ security:
     role_hierarchy:
         ROLE_SUPER_ADMIN: 
             - ROLE_FOUNDER
-
+            
         ROLE_FOUNDER: 
             - ROLE_COFOUNDER
             #PERMISSION_ROTE
@@ -36,6 +36,8 @@ security:
 
             #Le fondateur a le droit d'editer le profile de tous le monde a l'exeption de quelquel 
             #champs
+            - ROLE_AUDITOR_LOGIN
+            - ROLE_AUDITOR_ACTIVITY_LOG
 
         ROLE_COFOUNDER: 
             - ROLE_ADMIN
@@ -53,7 +55,7 @@ security:
             - ROLE_SONATA_ADMIN_GROUP_ACTION_EXPORT
             - ROLE_SONATA_ADMIN_GROUP_ACTION_VIEW 
             - ROLE_SONATA_ADMIN_GROUP_ACTION_EDIT 
-            
+
         ROLE_ADMIN: 
         #SONATA_ADMIN_USER_ADMIN
             - ROLE_SONATA_ADMIN_USER_ADMIN_LIST  
@@ -87,6 +89,17 @@ security:
             - ROLE_SONATA_ADMIN_USER_MEMBER_LIST
             - ROLE_SONATA_ADMIN_USER_MEMBER_VIEW
 
+        #LoggerLogin
+        ROLE_AUDITOR_LOGIN:
+            - ROLE_SONATA_ADMIN_LOGGER_LOGIN_LIST
+            - ROLE_SONATA_ADMIN_LOGGER_LOGIN_VIEW
+            - ROLE_SONATA_ADMIN_LOGGER_LOGIN_EXPORT
+
+        #ActivityLog
+        ROLE_AUDITOR_ACTIVITY_LOG: 
+            - ROLE_SONATA_ADMIN_LOGGER_ACTIVITY_LOG_LIST
+            - ROLE_SONATA_ADMIN_LOGGER_ACTIVITY_LOG_VIEW
+            - ROLE_SONATA_ADMIN_LOGGER_ACTIVITY_LOG_EXPORT
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
@@ -94,9 +107,9 @@ security:
     providers:
         users_in_memory: { memory: null }
         admin_user_provider:
-             id: App\Infrastructure\Security\AdminUserProvider
+             id: App\Infrastructure\Security\Provider\AdminUserProvider
         member_user_provider:
-             id: App\Infrastructure\Security\MemberUserProvider
+             id: App\Infrastructure\Security\Provider\MemberUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -107,6 +120,8 @@ security:
             lazy: true
             pattern: /admin(.*)
             provider: admin_user_provider
+            login_throttling:
+                max_attempts: 3  
             form_login:
                  username_parameter: email
                  password_parameter: password
@@ -116,7 +131,7 @@ security:
                  default_target_path: sonata_admin_dashboard
             remember_me:
                 secret: '%env(APP_SECRET)%'
-                lifetime: 2629746
+                lifetime: 26297465999998
                 path: /admin
             logout:
                path: sonata_user_admin_security_logout

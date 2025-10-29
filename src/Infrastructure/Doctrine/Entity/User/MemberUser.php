@@ -16,9 +16,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Doctrine\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Domain\User\MemberUserInterface;
 use App\Domain\Action\GroupActionInterface;
 use Doctrine\Common\Collections\Collection;
+use App\Domain\User\Model\MemberUserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Infrastructure\Doctrine\Entity\User\SonataUser;
 use App\Infrastructure\Doctrine\Entity\Action\GroupActionEntity;

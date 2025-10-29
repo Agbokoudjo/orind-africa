@@ -16,7 +16,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Service;
 
-use App\Domain\User\BaseUserInterface;
+use App\Domain\User\Enum\UserType;
+use App\Domain\User\Model\BaseUserInterface;
 
 /**
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
@@ -24,7 +25,34 @@ use App\Domain\User\BaseUserInterface;
  */
 final class UserAccountRouteResolver
 {
-    public function resolveLoginRouteName(BaseUserInterface $user): string
+    /**
+     * Noms des routes de connexion par type d'utilisateur.
+     */
+    private const LOGIN_ROUTES = [
+        'admin'  => 'app_admin_user_login',
+        'member' => 'app_member_user_login',
+        'default' => 'app_user_login',
+    ];
+
+    /**
+     * Noms des routes de réinitialisation de mot de passe par type.
+     */
+    private const RESET_PASSWORD_ROUTES = [
+        'admin'  => 'app_admin_reset_password',
+        'member' => 'app_member_reset_password',
+        'default' => 'app_user_reset_password',
+    ];
+
+    /**
+     * Noms des routes de modification d'email par type.
+     */
+    private const RESET_EMAIL_ROUTES = [
+        'admin'  => 'app_admin_reset_email',
+        'member' => 'app_member_reset_email',
+        'default' => 'app_user_reset_email',
+    ];
+
+    public static function resolveLoginRouteNameByUser(BaseUserInterface $user): string
     {
         return match (true) {
             $user->hasRole('ROLE_ADMIN')  => 'app_admin_user_login',
@@ -33,13 +61,22 @@ final class UserAccountRouteResolver
         };
     }
 
-    public function resolveResetPasswordRouteName(BaseUserInterface $user): string
+    public static function resolveLoginRouteNameByType(UserType $userType): string
+    {
+        return match ($userType) {
+            UserType::ADMIN  => 'app_admin_user_login',
+            UserType::MEMBER => 'app_member_user_login',
+            default                       => 'app_user_login',
+        };
+    }
+
+    public static function resolveResetPasswordRouteName(BaseUserInterface $user): string
     {
         // TODO : logique à implémenter
         return 'app_user_reset_password';
     }
 
-    public function resolveResetEmailRouteName(BaseUserInterface $user): string
+    public static function resolveResetEmailRouteName(BaseUserInterface $user): string
     {
         // TODO : logique à implémenter
         return 'app_user_reset_email';

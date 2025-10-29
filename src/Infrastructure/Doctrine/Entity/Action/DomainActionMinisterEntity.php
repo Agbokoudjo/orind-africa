@@ -17,8 +17,8 @@ namespace App\Infrastructure\Doctrine\Entity\Action;
 
 use App\Domain\Action\Domain;
 use Doctrine\ORM\Mapping as ORM;
-use App\Domain\User\AdminUserInterface;
 use Doctrine\Common\Collections\Collection;
+use App\Domain\User\Model\AdminUserInterface;
 use App\Infrastructure\Doctrine\Entity\User\AdminUser;
 use App\Infrastructure\Doctrine\Entity\Action\GroupActionEntity;
 use App\Infrastructure\Doctrine\Entity\Action\Repository\DomainActionMinisterRepository;

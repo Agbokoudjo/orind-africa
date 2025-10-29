@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace App\UI\Http\Form;
 
-use App\Domain\User\BaseUserInterface;
 use Symfony\Component\Form\AbstractType;
+use App\Domain\User\Model\BaseUserInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

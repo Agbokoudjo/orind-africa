@@ -17,15 +17,15 @@ namespace App\Infrastructure\Admin\User;
 
 use App\Domain\User\Enum\RoleUser;
 use libphonenumber\PhoneNumberFormat;
-use App\Domain\User\BaseUserInterface;
-use App\Domain\User\AdminUserInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\UX\Dropzone\Form\DropzoneType;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Symfony\Bundle\SecurityBundle\Security;
+use App\Domain\User\Model\BaseUserInterface;
 use App\Infrastructure\Admin\WlindablaAdmin;
+use App\Domain\User\Model\AdminUserInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
@@ -144,7 +144,8 @@ abstract class AbstractUserAdmin extends WlindablaAdmin
                     'attr' => [
                         'placeholder' => 'Filtre par email. Eg:internationaleswebservices@gmail.com',
                     ]
-                ]
+                    ],
+                'show_filter' => true,
             ])
             ->add('username',StringFilter::class, [
             'label' => 'Nom & Prénom(s)',
@@ -154,7 +155,8 @@ abstract class AbstractUserAdmin extends WlindablaAdmin
                 'attr' => [
                     'placeholder' => 'Filtre par Noms & Prénoms (s)',
                 ]
-            ]
+                ],
+            'show_filter' => true,
         ])
            ;
     }
@@ -186,10 +188,10 @@ abstract class AbstractUserAdmin extends WlindablaAdmin
                         'label_attr' => ['class' => 'form-label'],
                         'attr' => [
                             'placeholder' => 'Ex: WLINDABABLA Empedocle Brondelle',
-                            'autocomplete' => 'on', // corrigé
-                            'minlength' => 6,       // corrigé
-                            'maxlength' => 255,     // corrigé
-                            'data-pattern' => '^[\p{L}\p{M}\s\']+$',
+                            'autocomplete' => 'on', 
+                            'minlength' => 6,      
+                            'maxlength' => 255,   
+                            'data-pattern' => '^[\p{L}\p{M}\s]+$',
                             'data-eg-await' => 'WLINDABABLA Empedocle Brondelle',
                             'data-escapestrip-html-and-php-tags' => true,
                             'data-event-validate-blur' => 'blur',
@@ -207,8 +209,12 @@ abstract class AbstractUserAdmin extends WlindablaAdmin
                             'data-escapestrip-html-and-php-tags' => false,
                             'data-event-validate-blur' => 'blur',
                             'data-event-validate-input' => 'input',
+                            'data-type' => "email",
+                            'minlength' => 6,
+                            'maxlength' => 200,
                             'data-eg-await' => 'franckagbokoudjo301@gmail.com',
-                            'data-type' => 'email',
+                            'data-allow-quoted-local' => 'false',
+                            'data-host-whitelist'=> "gmail.com,yahoo.com",
                             'disabled'=> $this->isGrantedUser(UserProfileEditVoter::PERMISSION_EDITOR_EMAIL)  === true ? false : true
                         ]
                     ])
@@ -248,9 +254,9 @@ abstract class AbstractUserAdmin extends WlindablaAdmin
                             'data-escapestrip-html-and-php-tags' => true,
                             'data-event-validate-change' => 'change',
                             'data-event-validate-blur' => 'blur',
-                            'autocomplete' => 'on', // corrigé
-                            'minlength' => 3,      // corrigé
-                            'maxlength' => 150,     // corrigé,
+                            'autocomplete' => 'on', 
+                            'minlength' => 3,      
+                            'maxlength' => 150,    
                             'data-pattern' => '^[\p{L}\p{M}\s\'-]+$',
                             'class' => 'form-control select2 form-select form-select-lg',
                             'data-minimumInputLength' => 3

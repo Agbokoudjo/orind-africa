@@ -16,15 +16,15 @@ declare(strict_types=1);
 
 namespace App\UI\Console;
 
-use App\Application\UseCase\Command\PromoteUserToSuperAdminCommand;
-use App\Application\UseCase\CommandHandler\PromoteUserToSuperAdminCommandHandler;
+use App\Domain\User\Enum\UserType;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Output\OutputInterface;
-use App\Infrastructure\Doctrine\Entity\User\AdminUser;
+use App\Domain\User\Message\PromoteUserToSuperAdminCommand;
+use App\Application\UseCase\User\PromoteUserToSuperAdminCommandHandler;
 
 /**
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
@@ -57,7 +57,7 @@ final class PromoteUserToSuperAdminCommandConsole extends Command
         });
         $username = $helper->ask($input, $output, $question);
 
-        $this->promoteUserToSuperAdmin->handler(AdminUser::class, new PromoteUserToSuperAdminCommand($username));
+        $this->promoteUserToSuperAdmin->handle(UserType::ADMIN, new PromoteUserToSuperAdminCommand($username));
 
         return Command::SUCCESS;
     }

@@ -16,10 +16,8 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Authorization;
 
-use App\Domain\User\Enum\UserType;
-use App\Domain\User\BaseUserInterface;
-use App\Domain\User\AdminUserInterface;
-use App\Domain\User\MemberUserInterface;
+use App\Domain\User\Model\BaseUserInterface;
+use App\Domain\User\Service\Resolver\UserTypeResolver;
 use App\Domain\Security\UserPermissionRoleRepositoryInterface;
 
 /**
@@ -37,23 +35,9 @@ final class AuthorizationCheckerForUser implements AuthorizationCheckerForUserIn
         
         return $user->hasRole($role) 
             || $this->userPermissionRoleRepo->userHasRole(
-            $this->resolveUserType($user),
+           UserTypeResolver::resolveFromUser($user),
             $user->getId(),
             $role
         );
-    }
-
-    private function resolveUserType(BaseUserInterface $user):UserType{
-
-        if($user instanceof AdminUserInterface){
-            return UserType::ADMIN ;
-        }
-        else if($user instanceof MemberUserInterface){
-
-            return UserType::MEMBER ;
-        }
-        else {
-            return UserType::SIMPLE ;
-        }
-    }
+    }   
 }

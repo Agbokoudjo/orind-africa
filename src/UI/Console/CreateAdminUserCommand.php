@@ -15,15 +15,15 @@ declare(strict_types=1);
 
 namespace App\UI\Console;
 
+use App\Domain\User\Enum\UserType;
+use App\Domain\User\Message\UserCreateCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Attribute\AsCommand;
-use App\Application\UseCase\Command\UserCommand;
-use App\Application\UseCase\CommandHandler\AdminCreateUserCommandHandler;
-use App\Infrastructure\Doctrine\Entity\User\AdminUser;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Output\OutputInterface;
+use App\Application\UseCase\User\UserCreateCommandHandler;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
@@ -33,7 +33,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 #[AsCommand(name: 'sonata:user:create', description: 'Create a user')]
 final class CreateAdminUserCommand extends Command
 {
-    public function __construct(private AdminCreateUserCommandHandler $adminCreateUser)
+    public function __construct(private UserCreateCommandHandler $adminCreateUser)
     {
         parent::__construct('sonata:user:create');
     }
@@ -82,9 +82,9 @@ final class CreateAdminUserCommand extends Command
         // $question=new ConfirmationQuestion(\sprintf('Set the %s as super admin (yes/no)',$username));
         // $superAdmin =  $helper->ask($input, $output, $question);
 
-        $this->adminCreateUser->handler(
-            AdminUser::class,
-            new UserCommand(
+        $this->adminCreateUser->handle(
+            UserType::ADMIN,
+            new UserCreateCommand(
                 username: $username,
                 email: $email, 
                 password: $password,

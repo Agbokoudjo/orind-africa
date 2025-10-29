@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Doctrine\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Domain\User\AdminUserInterface;
 use Doctrine\Common\Collections\Collection;
+use App\Domain\User\Model\AdminUserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Domain\Action\DomainActionMinisterInterface;
 use App\Infrastructure\Doctrine\Entity\User\SonataUser;
@@ -30,7 +30,7 @@ use App\Infrastructure\Doctrine\Entity\User\Repository\AdminUserRepository;
  */
 #[ORM\Entity(repositoryClass: AdminUserRepository::class)]
 #[ORM\Table(name: "sonata_admin_user")]
-final class AdminUser extends SonataUser implements AdminUserInterface
+class AdminUser extends SonataUser implements AdminUserInterface
 {
     public const ROLE_DEFAULT = 'ROLE_ADMIN';
 

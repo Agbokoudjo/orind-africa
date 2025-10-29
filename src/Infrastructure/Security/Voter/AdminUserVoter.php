@@ -16,12 +16,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Voter;
 
-use App\Domain\User\AdminUserInterface;
+use App\Domain\User\Model\AdminUserInterface;
 use App\Domain\Security\ObjectPermissionInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Application\Service\Authorization\AuthorizationCheckerForUserInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use App\Application\Service\Authorization\AuthorizationCheckerForUserInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
 /**
@@ -52,7 +52,7 @@ final class AdminUserVoter extends Voter implements ObjectPermissionInterface
 
             return false ;
         }
-
+        
         // si le utilisateur n'as pas le role admin on return false ,immediatement ,seul les admin ont le droit
         // d'acceder a la liste des admin
         if (!$this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {

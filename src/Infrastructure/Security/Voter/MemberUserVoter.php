@@ -16,22 +16,17 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Voter;
 
-use App\Domain\User\BaseUserInterface;
-use App\Domain\User\AdminUserInterface;
-use App\Domain\User\MemberUserInterface;
+use App\Domain\User\Model\BaseUserInterface;
+use App\Domain\User\Model\MemberUserInterface;
 use App\Domain\Security\ObjectPermissionInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use App\Application\Service\Authorization\AuthorizationCheckerForUserInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
 /**
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
  * @package <https://github.com/Agbokoudjo/>
  */
-
 final class MemberUserVoter extends Voter implements ObjectPermissionInterface
 {
     public const PERMISSION_SKILLS="SKILLS";

@@ -1,0 +1,46 @@
+{% extends get_admin_template('base_list_field', admin.code) %}
+
+{% block field %}
+    {% set userContext = value %} {# 'value' est le tableau PHP [id => ..., role => ..., ...] #}
+    
+    {% set username = userContext.username is defined and userContext.username not in ['anonymous', 'N/A'] 
+                      ? userContext.username 
+                      : userContext.email %}
+    
+    {# 1. AFFICHER L'IDENTITÉ PRINCIPALE (Nom ou Email) #}
+    <div style="font-weight: 600;">
+        {% if userContext.type == 'guest' %}
+            <span class="badge bg-secondary">ANONYME</span>
+        {% elseif username != userContext.email %}
+            {{ username }}
+        {% else %}
+            {{ userContext.email }}
+        {% endif %}
+    </div>
+
+    {# 2. AFFICHER LE RÔLE/TYPE (Badge de couleur) #}
+    {% set role = userContext.role is defined ? userContext.role|replace({'ROLE_': ''}) : 'N/A' %}
+    
+    {% set badge_class = 'bg-secondary' %}
+    {% if userContext.type == 'admin' and role in ['SUPER_ADMIN', 'ADMIN'] %}
+        {% set badge_class = 'bg-danger' %}
+    {% elseif role == 'MINISTRE' %}
+        {% set badge_class = 'bg-warning' %}
+   {% elseif userContext.type == 'admin' and role in ['FOUNDER', 'CO_FOUNDER'] %}
+        {% set badge_class = 'bg-info' %}
+    {% elseif userContext.type == 'client' or role == 'MEMBER' %}
+        {% set badge_class = 'bg-success' %}
+    {% endif %}
+
+    <span class="badge {{ badge_class }}" title="ID: {{ userContext.id|default('N/A') }}">
+        {{ role }}
+    </span>
+    
+    {# 3. AFFICHAGE OPTIONNEL DE L'ID (en petit) #}
+    {% if userContext.id is not null and userContext.id not in [0, 'N/A', 'anonymous'] %}
+        <span style="font-size: 0.75em; color: #6c757d;">
+            ID: {{ userContext.id }}
+        </span>
+    {% endif %}
+
+{% endblock %}

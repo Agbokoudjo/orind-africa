@@ -14,8 +14,6 @@ sonata_admin:
                 label: app.admin.group.user
                 translation_domain: Admin
                 icon: fas fa-users
-                # items:
-                #    - App\Infrastructure\Admin\User\AdminUserAdmin
                 roles: ['ROLE_ADMIN','ROLE_MEMBER']
             app.admin.group.domain_group.action:
                 label: app.admin.group.domain_group.action
@@ -27,6 +25,12 @@ sonata_admin:
                 translation_domain: Admin
                 icon: fas fa-user-shield
                 roles: ['ROLE_ADMIN']
+
+            sonata.admin.logger:
+                label: sonata.admin.logger
+                translation_domain: Admin
+                icon: fas fa-shield-halved
+                roles: ['ROLE_AUDITOR_LOGIN','ROLE_AUDITOR_ACTIVITY_LOG']
 
     default_controller: App\UI\Http\Controller\Admin\WlindablaAdminCRUDController.php
     # default_admin_services:

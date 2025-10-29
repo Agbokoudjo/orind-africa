@@ -18,7 +18,7 @@ namespace App\Infrastructure\Doctrine\Entity\Security;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Domain\Security\PermissionRole;
-use App\Domain\User\AdminUserInterface;
+use App\Domain\User\Model\AdminUserInterface;
 use App\Infrastructure\Doctrine\Entity\User\AdminUser;
 use App\Infrastructure\Doctrine\Entity\Security\Repository\PermissionRoleRepository;
 
@@ -47,5 +47,11 @@ final class PermissionRoleEntity extends PermissionRole
     #[ORM\ManyToOne(targetEntity: AdminUser::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     protected ?AdminUserInterface $createdBy = null;
+
+    #[ORM\Column(type: "datetime_immutable")]
+    protected ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\Column(type: "datetime", nullable: true)]
+    protected ?\DateTimeInterface $updatedAt = null;
 
 }

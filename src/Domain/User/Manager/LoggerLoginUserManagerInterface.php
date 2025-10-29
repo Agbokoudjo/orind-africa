@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 
 namespace App\Domain\User\Manager;
-use App\Domain\User\LoggerLoginUser ;
+use App\Domain\User\Model\LoggerLoginUser;
 
 interface LoggerLoginUserManagerInterface
 {

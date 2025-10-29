@@ -16,31 +16,89 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Service\Mailing;
 
-use Symfony\Component\Mime\Email;
-use App\Infrastructure\Service\Mailing\MailerFactory;
-use Twig\Environment;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Mime\Message;
-use Symfony\Component\Mailer\MailerInterface;
-use App\Infrastructure\QueueHandler\EnqueueMethod;
+use RuntimeException;
+use Psr\Log\LoggerInterface;
+use App\Infrastructure\Service\Mailing\PriorityInterface;
+use App\Infrastructure\Service\Mailing\EmailSenderInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 /**
+ * Service d'envoi d'emails système automatisés.
+ * 
+ * Utilise la configuration 'system' pour envoyer des emails
+ * de notification système (confirmation, réinitialisation, etc.).
+ *
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
- * @package <https://github.com/Agbokoudjo/>
+ * @package App\Infrastructure\Service\Mailing
  */
-final class SystemMailer extends MailerFactory 
+#[AutoconfigureTag(name:"app.system.mailer")]
+final class SystemMailer implements EmailSenderInterface
 {
+    private const CONFIG_TYPE = 'system';
+
     public function __construct(
-        private readonly  Environment $twig,
-        private readonly  EnqueueMethod $enqueue,
-        private readonly  MailerInterface $mailer,
-        private readonly  ?string $dkimKey = null,
-        private readonly array $fromAddresses // injecté depuis services.yaml
-    ) {
-        parent::__construct($twig,$enqueue,$mailer,$dkimKey,$fromAddresses);
+        private readonly MailerFactoryInterface $mailerFactory,
+        private readonly ?LoggerInterface $logger = null
+    ) {}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function send(
+        string $recipientAddress,
+        string $subject,
+        string $templatePath,
+        array $context,
+        int $priority = PriorityInterface::PRIORITY_HIGH
+    ): void {
+
+        $this->mailerFactory->validatePriority($priority);
+        try {
+            $fromConfig = $this->mailerFactory->fromConfig(self::CONFIG_TYPE);
+
+            if (!isset($fromConfig['address'], $fromConfig['name'])) {
+                throw new RuntimeException(
+                    'Configuration système invalide : clés "address" et "name" requises'
+                );
+            }
+
+            $systemEmail = $this->mailerFactory
+                ->createTemplateEmail(
+                $fromConfig['address'],
+                $fromConfig['name'],
+                $recipientAddress,
+                $subject,
+                $templatePath,
+                $context
+            )
+            ->priority($priority);
+
+            $systemEmail->getHeaders()->addTextHeader('X-Transport', self::CONFIG_TYPE);
+            
+            $this->mailerFactory->sendAsync($systemEmail);
+
+            $this->logger?->info('Email système envoyé avec succès', [
+                'recipient' => $recipientAddress,
+                'subject' => $subject,
+                'template' => $templatePath,
+            ]);
+        } catch (RuntimeException $e) {
+            $this->logger?->error('Échec de la récupération de la configuration système', [
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        } catch (\Exception $e) {
+            $this->logger?->error('Échec de l\'envoi de l\'email système', [
+                'recipient' => $recipientAddress,
+                'subject' => $subject,
+                'error' => $e->getMessage(),
+            ]);
+
+            throw new RuntimeException(
+                sprintf('Impossible d\'envoyer l\'email système : %s', $e->getMessage()),
+                0,
+                $e
+            );
+        }
     }
-    public function createEmail(string $template,array $data = []): Email {
-       return $this->createEmailInternal('system',$template,$data);
-    }
-    
 }

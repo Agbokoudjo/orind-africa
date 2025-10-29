@@ -2,25 +2,39 @@ parameters:
     router.request_context.scheme: 'https'
     asset.request_context.secure: true
     NAME_SITE: "ORIND AFRICA"
+    app.execute_listener: '%env(bool:APP_EXECUTE_LISTENER)%'
+    app.site_name: "ORIND AFRICA"
     app.admin_user.class: App\Infrastructure\Doctrine\Entity\User\AdminUser
     dkim_key: '%env(resolve:default::MAILER_DKIM)%'
     app.mail.from:
-    system:
-        address: '%env(APP_MAIL_FROM_SYSTEM)%'
-        name: '%env(APP_MAIL_FROM_SYSTEM_NAME)%'
-    support:
-        address: '%env(APP_MAIL_FROM_SUPPORT)%'
-        name: '%env(APP_MAIL_FROM_SUPPORT_NAME)%'
-    notification:
-        address: '%env(APP_MAIL_FROM_NOTIF)%'
-        name: '%env(APP_MAIL_FROM_NOTIF_NAME)%'
+        system:
+            address: '%env(APP_MAIL_FROM_SYSTEM)%'
+            name: '%env(APP_MAIL_FROM_SYSTEM_NAME)%'
+        support:
+            address: '%env(APP_MAIL_FROM_SUPPORT)%'
+            name: '%env(APP_MAIL_FROM_SUPPORT_NAME)%'
+        notification:
+            address: '%env(APP_MAIL_FROM_NOTIF)%'
+            name: '%env(APP_MAIL_FROM_NOTIF_NAME)%'
 
     SONATA_ADMIN_AUTHOR_BACK_OFFICE:
         EMAIL: internationaleswebservices@gmail.com
         USERNAME: AGBOKOUDJO Hounha Franck
 
-   
-
+    routesConfig:
+        login:
+            admin: 'app_admin_user_login'
+            member: 'app_member_user_login'
+            default: 'app_user_login'
+        reset_password:
+            admin: 'app_admin_reset_password'
+            member: 'app_member_reset_password'
+            default: 'app_user_reset_password'
+        reset_email:
+            admin: 'app_admin_reset_email'
+            member: 'app_member_reset_email'
+            default: 'app_user_reset_email'
+            
 services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -29,20 +43,21 @@ services:
     App\:
         resource: '../src/'
         
-    App\Domain\User\Service\CanonicalFieldsUpdater: ~
+    App\Infrastructure\Utility\CanonicalFieldsUpdater: ~
 
     App\Domain\User\Service\CanonicalFieldsUpdaterInterface:
-        alias: App\Domain\User\Service\CanonicalFieldsUpdater
+        alias: App\Infrastructure\Utility\CanonicalFieldsUpdater
     
     #TranslatorInterface
     App\Application\Service\TranslatorInterface:
         alias: App\Infrastructure\Translation\SymfonyTranslatorAdapter
     
-    #Mailer
-    App\Infrastructure\Service\Mailing\SystemMailer:
+    # Mailer Factory
+    App\Infrastructure\Service\Mailing\MailerFactory:
         arguments:
-            $fromAddresses: '%app.mail.from%'
+            $domainName: '%env(DOMAINE_NAME)%'
             $dkimKey: '%dkim_key%'
+            
     #Security
     security.acl.permission.map:
         class: Sonata\AdminBundle\Security\Acl\Permission\AdminPermissionMap
@@ -50,6 +65,19 @@ services:
     App\Application\Service\Authorization\AuthorizationCheckerForUser:
         arguments:
             $userPermissionRoleRepo: '@App\Domain\Security\UserPermissionRoleRepositoryInterface'
+            
+    #Hash
+    App\Infrastructure\Security\Hash\NativeTokenHasher:
+        arguments:
+            $algorithm: !php/const PASSWORD_ARGON2ID
+            $options:
+                memory_cost: 65536  # 64 MB
+                time_cost: 4
+                threads: 2
+
+    # Alias pour l'interface
+    App\Domain\User\Service\Security\TokenHasherInterface:
+        alias: App\Infrastructure\Security\Hash\NativeTokenHasher
 
     # on lie l’interface à l’implémentation
     App\Application\Service\Authorization\AuthorizationCheckerForUserInterface:
@@ -58,11 +86,13 @@ services:
     #Manager and Persistance
     App\Infrastructure\Persistance\AdminUserManager:
         tags: ['app.user_manager']
+
      #Manager and Persistance
     App\Infrastructure\Persistance\MemberUserManager:
         tags: ['app.user_manager']
+
     #ManagerRegistry
-    App\Infrastructure\Service\UserManagerRegistry:
+    App\Infrastructure\Registry\UserManagerRegistry:
         arguments:
             - !tagged_iterator app.user_manager
 
@@ -81,5 +111,14 @@ services:
             $pool: '@sonata.admin.pool'
             $configuration: '@sonata.admin.configuration'   # <── alias
             $translator: '@translator'
+
+    # Alias pour utiliser l'adapter Symfony comme implémentation par défaut
+    App\Application\Bus\EventBusInterface:
+        alias: App\Infrastructure\Bus\SymfonyEventBusAdapter
+
+    # L'adapter Symfony lui-même
+    App\Infrastructure\Bus\SymfonyEventBusAdapter:
+        arguments:
+            $eventDispatcher: '@event_dispatcher'
 
     

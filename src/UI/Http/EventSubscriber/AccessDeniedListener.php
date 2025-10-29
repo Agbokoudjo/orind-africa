@@ -59,6 +59,7 @@ class AccessDeniedListener implements EventSubscriberInterface
         if(!$user){ 
             return ;
         }
+
        $event->setResponse(new Response(
         $this->twigRender->render(
                 'bundles/TwigBundle/Exception/error403.html.twig',
@@ -73,7 +74,6 @@ class AccessDeniedListener implements EventSubscriberInterface
         * nous allons implementer un systeme de Logger en async ou dans une base de donnee NOsql
         * tout en dipatcher un nouveau element
         * pour les historiques ,seul les fondateurs,ou super admin peuvent consulter suelements
-        * le super _admin a seulement le droit de faire une action delete
         */
        return ;
     }

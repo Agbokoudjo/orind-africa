@@ -17,43 +17,52 @@ declare(strict_types=1);
 namespace App\Infrastructure\QueueHandler;
 
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use App\Application\UseCase\LoggerLoginUseCase;
-use App\Infrastructure\Service\Mailing\SystemMailer;
+use App\Application\UseCase\User\LoggerLoginUseCase;
 use App\Application\Queue\Message\ServiceMethodMessage;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use App\Application\UseCase\User\UpdateUserProfileCommandHandler;
 use App\Application\QueueHandler\ServiceMethodMessageHandlerInterface;
+use App\Application\UseCase\CommandHandler\ActivityLogCommandHandler;
 
 /**
+ * Classe ServiceMethodMessageHandler
+ *
+ * Gère l’exécution asynchrone des méthodes de service envoyées sous forme de message.
+ * Cette classe agit comme un handler du composant Messenger de Symfony : elle reçoit
+ * un objet {@see ServiceMethodMessage}, récupère dynamiquement le service concerné
+ * depuis le conteneur, puis invoque la méthode indiquée avec les paramètres fournis.
+ *
+ * Elle implémente {@see ServiceSubscriberInterface} afin de déclarer explicitement 
+ * les services qu’elle est autorisée à consommer, garantissant ainsi une meilleure 
+ * autoconfiguration et un couplage faible.
+ *
+ * En résumé, cette classe permet d’exécuter à distance ou de manière différée 
+ * des appels de méthodes sur des services applicatifs via la file de messages.
+ * 
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
  * @package <https://github.com/Agbokoudjo/>
  */
-#[AsMessageHandler(fromTransport:"async",handles:ServiceMethodMessage::class)]
+#[AsMessageHandler(fromTransport: "async_app_transport",handles:ServiceMethodMessage::class)]
 final class ServiceMethodMessageHandler implements ServiceSubscriberInterface,ServiceMethodMessageHandlerInterface
 {
     public function __construct(private readonly ContainerInterface $container) {}
 
-    public function __invoke(ServiceMethodMessage $message): void
-    {
-       $this->__handler($message);
-    }
     public static function getSubscribedServices(): array
     {
         return [
-            SystemMailer::class=>SystemMailer::class,
-            MailerInterface::class => MailerInterface::class,
-            LoggerLoginUseCase::class=> LoggerLoginUseCase::class
+            LoggerLoginUseCase::class,
+            UpdateUserProfileCommandHandler::class,
+            ActivityLogCommandHandler::class
         ];
     }
-    private function __handler(ServiceMethodMessage $message): mixed
-    {
-        /** @var callable $callable */
-        $callable = [
-            $this->container->get($message->getServiceName()),
-            $message->getMethod(),
-        ];
 
-       return  call_user_func_array($callable, $message->getParams());
+    public function __invoke(ServiceMethodMessage $message): void
+    {
+        $service = $this->container->get($message->getServiceName());
+        $method = $message->getMethod();
+        $params = $message->getParams();
+
+        $service->$method(...$params);
     }
 }

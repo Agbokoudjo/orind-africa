@@ -12,6 +12,7 @@ file that was distributed with this source code.
     {%- if disabled %} disabled="disabled"{% endif %}
     {%- if multiple %} multiple="multiple"{% endif %}
     {%- for attribute, value in attr %} {{ attribute }}="{{ value }}" {% endfor -%}
+    class="form-select form-select-lg form-control autocomplete_input"
 >
    {% if value.ids is defined and value.labels is defined %}
     {# Nouveau format #}
@@ -76,7 +77,7 @@ file that was distributed with this source code.
             allowClear: {{ required ? 'false' : 'true' }},
             enable: {{ disabled ? 'false' : 'true' }},
             minimumInputLength: {{ minimum_input_length }},
-            theme: 'bootstrap',
+            theme: 'bootstrap-5',
             width: function() {
                 return Admin.get_select2_width(jQuery(this));
             },

@@ -20,7 +20,7 @@ namespace App\Domain\User\Exception;
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
  * @package <https://github.com/Agbokoudjo/>
  */
-final class DomainUserNotFoundException extends \InvalidArgumentException
+final class DomainUserNotFoundException extends \DomainException
 {
     public function __construct(string $username)
     {

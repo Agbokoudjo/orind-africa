@@ -1,3 +1,8 @@
 framework:
     mailer:
-        dsn: '%env(MAILER_DSN)%'
+        transports:
+            # 1. Transport pour le système (Notifications)
+            system: '%env(SYSTEM_MAILER_DSN)%'
+            
+            # 2. Transport pour le support (Formulaires clients)
+            support: '%env(SUPPORT_MAILER_DSN)%'

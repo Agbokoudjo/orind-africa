@@ -15,13 +15,15 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Admin\User;
 
+use Sonata\AdminBundle\Form\FormMapper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use App\Infrastructure\Admin\User\AbstractUserAdmin;
-use App\Infrastructure\Doctrine\Entity\User\AdminUser;
 use App\Infrastructure\Persistance\AdminUserManager;
+use App\Infrastructure\Doctrine\Entity\User\AdminUser;
+use App\Infrastructure\Security\Voter\UserProfileEditVoter;
 use App\UI\Http\Controller\Admin\User\AdminUserCRUDController;
 use App\Infrastructure\Security\Handler\AdminUserRoleSecurityHandler;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 /**
@@ -54,6 +56,23 @@ final class AdminUserAdmin extends AbstractUserAdmin
         private readonly AdminUserManager $adminUserManager)
     {
         parent::__construct("label_list_admin_user",null, 'label_create_admin_user');
+    }
+
+    protected function configureFormFields(FormMapper $form): void
+    {
+
+        if ($this->isFormEdit()) {
+
+            if (
+                $this->isGrantedUser('ROLE_FOUNDER') ||
+                $this->isGrantedUser(UserProfileEditVoter::PERMISSION_CAN_EDIT_OWN_PROFILE)
+            ) {
+
+                $this->configureFormFieldsParent($form);
+            }
+        } else {
+            $this->configureFormFieldsParent($form);
+        }
     }
     
     protected function generateBaseRouteName(bool $isChildAdmin = false): string

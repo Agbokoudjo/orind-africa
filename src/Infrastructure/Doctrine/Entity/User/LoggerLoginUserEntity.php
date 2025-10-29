@@ -17,7 +17,7 @@ namespace App\Infrastructure\Doctrine\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Domain\User\Enum\UserClass;
-use App\Domain\User\LoggerLoginUser  ;
+use App\Domain\User\Model\LoggerLoginUser;
 use App\Infrastructure\Doctrine\Entity\User\Repository\LoggerLoginUserEntityRepository;
 
 /**
@@ -80,5 +80,32 @@ class LoggerLoginUserEntity
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUsername(): string
+    {
+        return $this->username;
+    }
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+    public function getUserClass(): UserClass
+    {
+        return $this->userClass;
+    }
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function getLastLoginIp(): ?string
+    {
+        return $this->lastLoginIp;
+    }
+
+    public function setLastLoginIp(?string $lastLoginIp): void
+    {
+        $this->lastLoginIp = $lastLoginIp;
     }
 }

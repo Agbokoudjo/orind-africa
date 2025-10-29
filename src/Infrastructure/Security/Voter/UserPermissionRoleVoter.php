@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Voter;
 
-use App\Domain\User\AdminUserInterface;
+use App\Domain\User\Model\AdminUserInterface;
 use App\Domain\Security\ObjectPermissionInterface;
 use App\Domain\Security\UserPermissionRoleInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;

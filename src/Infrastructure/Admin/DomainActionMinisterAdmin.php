@@ -90,9 +90,9 @@ final class DomainActionMinisterAdmin extends WlindablaAdmin
                     'label_attr' => ['class' => 'form-label'],
                     'attr' => [
                         'placeholder' => 'Ex: Communication...',
-                        'autocomplete' => 'on', // corrigé
-                        'minlength' => 6,       // corrigé 
-                        'maxlength' => 255,     // corrigé
+                        'autocomplete' => 'on', 
+                        'minlength' => 6,       
+                        'maxlength' => 255,     
                         'data-pattern' => '^[\p{L}\p{M}\s\']+$',
                         'data-eg-await' => 'Communication',
                         'data-escapestrip-html-and-php-tags' => 'true',
@@ -130,13 +130,13 @@ final class DomainActionMinisterAdmin extends WlindablaAdmin
                 'label_attr' => ['class' => 'form-label'],
                 'row_attr' => ['class' => 'mt-3'],
                 'attr' => [
-                    'autocomplete' => 'on', // 'true' n’est pas une valeur valide ici
-                    'minlength' => 20, // corriger la faute de frappe (min-lenght)
-                    'maxlength' => 20000, // corriger la faute de frappe (max-lenght)
-                    'data-escapestrip-html-and-php-tags' => 'true', // custom attribute (JS)
+                    'autocomplete' => 'on', 
+                    'minlength' => 20, 
+                    'maxlength' => 20000, 
+                    'data-escapestrip-html-and-php-tags' => 'true', 
                     'data-event-validate-blur' => 'blur',
                     'data-event-validate-input' => 'input',
-                    'data-pattern' => "^[\p{L}\p{M}\p{N}\s.,;:!?\"'’()\[\]\-–—_€$%°\n\r]+$", // Corrigé
+                    'data-pattern' => "^[\p{L}\p{M}\p{N}\s\p{P}\n\r]+$", // Corrigé
                     'rows' => 6
                 ]
             ])

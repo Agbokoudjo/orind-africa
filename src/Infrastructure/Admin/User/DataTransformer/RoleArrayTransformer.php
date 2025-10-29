@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Admin\User\DataTransformer;
 
-use App\Domain\User\BaseUserInterface;
+use App\Domain\User\Model\BaseUserInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 
 /**

@@ -5,6 +5,8 @@
 /.env.*.local
 /.env
 .env
+/config/ssl/dkim_private.key
+/config/ssl/dkim_public.txt
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/

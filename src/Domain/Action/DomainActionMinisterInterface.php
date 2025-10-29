@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Action;
 
-use App\Domain\User\AdminUserInterface;
+use App\Domain\User\Model\AdminUserInterface;
 
 interface DomainActionMinisterInterface
 {

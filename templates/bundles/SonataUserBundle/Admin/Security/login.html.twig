@@ -14,57 +14,17 @@
 
 {% extends base_template %}
 {% block sonata_nav %}{% endblock sonata_nav %}
+
+{% block favicon %}
+    <link rel="icon" href="{{ asset(sonata_config.logo) }}" width="100" height="100">
+{% endblock %}
+
 {% block sonata_left_side %}{% endblock %}
  {% block sonata_header %}{% endblock %}
 {% block body_attributes %}class="sonata-bc login-page {% if _use_icheck %}sonata-icheck{% endif %}"{% endblock %}
-{% block stylesheets %}   
-{# <link rel="stylesheet" href="{{asset('styles/login.css')}}"> #}
-<style>
-    :root {
-            --teal: #0ec5b2;
-            --orange: #e19a2a;
-            --text: #3b3b3b;
-            --light: #eeedf2;
-            --primary: #0ec5b2;
-            --background: #f4f6f9;
-            --white: #ffffff;
-            --gray: #6c757d;
-            --border: #dee2e6;
-            --font-family: 'Inter', sans-serif;
-            --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.2); /* Ombre pour faire flotter le formulaire sur le fond sombre */
-            --transition-speed: 0.3s;
-            --border-radius: 8px;
-        }
-
-    html,body.sonata-bc.login-page{
-        background: linear-gradient(145deg, #101c27 0%, #0d273a 50%, var(--teal) 100%);
-        font-family: var(--font-family);
-        color: var(--text);
-        margin: 0;
-        min-height: 100vh;
-        align-content: center ;
-        overflow-y: auto;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
-    h1 {
-        color: var(--text);
-        font-size: 1.5rem;
-        font-weight: 800; /* Plus de poids pour l'identité de marque */
-        margin-bottom: 0.5rem;
-        text-align: center;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        }
-        p.subtitle {
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            font-weight: 500;
-        }
-</style>
+{% block stylesheets %}  
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"> 
+<link rel="stylesheet" href="{{asset('styles/login.css')}}">
   {% endblock %}
 {% block sonata_footer %} {% endblock %}
 {% block title %}
@@ -72,13 +32,18 @@
 {% endblock %}
 {% block javascripts_inline %}{% endblock %}
 {% block javascript_inline %}{% endblock %}
+{% block javascripts %}
+      {{ parent() }}
+     {% block importmap %}{{ importmap('login') }}{% endblock %}
+{% endblock %}
+
 {% block sonata_wrapper %}
    <div class="login-box">
         {% block login_box_header %}
             <div class="login-header">
                 {% if 'icon' == sonata_config.getOption('logo_content') or 'all' == sonata_config.getOption('logo_content') %}
                     <div class="login-logo">
-                        <img style="width:64px;" src="{{ asset(sonata_config.logo) }}" alt="{{ sonata_config.title }}">
+                        <img  src="{{ asset(sonata_config.logo) }}" alt="{{ sonata_config.title }}" class="img-fluid">
                     </div>
                 {% endif %}
                 {% if 'text' == sonata_config.getOption('logo_content') or 'all' == sonata_config.getOption('logo_content') %}
@@ -97,7 +62,11 @@
                     {% endif %}
                 {% endblock %}
                 
-                <form action="{{ path("app_admin_user_login") }}" method="post" role="form">
+                <form action="{{ path("app_admin_user_login") }}" 
+                      method="post" 
+                      role="form" 
+                      class="form-validate"
+                      name="login_form">
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token }}"/>
                     <div class="form-group has-feedback">
                         <label for="email">{{ 'form.label_email_admin'|trans({}, 'SonataUserBundle') }}</label>
@@ -108,7 +77,15 @@
                                 placeholder="admin@orindafrica.com"
                                 required="required"
                                 type="email"
-                                value="{{ last_username }}"/>
+                                data-type="email"
+                                data-allow-quoted-local="false"
+                                value="{{ last_username }}"
+                                maxlength="200"
+                                minlength="6"
+                                data-host-whitelist="gmail.com"
+                                data-event-validate-blur="blur"
+                                data-event-validate-input="input"
+                                />
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
@@ -130,6 +107,18 @@
                                 required="required"
                                 type="password"
                                 autocomplete="current-password"
+                                maxlength="255"
+                                minlength="16"
+                                data-event-validate-blur="blur"
+                                data-event-validate-input="input"
+                                data-enable-scoring="false"
+                                data-custom-upper-regex="[\p{Lu}]"
+                                data-custom-lower-regex="[\p{Ll}]"
+                                data-custom-number-regex="[\p{N}]"
+                                data-custom-symbol-regex="[\p{S}\p{P}]"
+                                data-custom-special-char-regex="[\p{S}\p{P}\s]"
+                                data-custom-punctuation-regex="[\p{P}]"
+                                data-pattern="^[\p{L}\p{N}\p{M}\p{S}\p{P}\s]+$"
                             />
                         </div>
                     </div>
@@ -143,11 +132,8 @@
             {% endblock %}
         </div>
         <div class="login-box-footer">
-            <p>© 2025 ORIND AFRICA - Services Numériques</p>
+            <p>© {{ 'now'|date('Y', 'UTC') }} {{NAME_SITE}}- Services Numériques</p>
         </div>
     </div>
 {% endblock sonata_wrapper %}
-{% block javascripts %}
-    <script src="{{asset('login.js')}}"></script>
-{% endblock %}
 

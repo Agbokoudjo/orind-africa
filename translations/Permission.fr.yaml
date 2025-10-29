@@ -12,8 +12,9 @@ forms:
   permission_role_context_placeholder: "Ex : Domaine = UI/UX Design"
   
   permission_role_description_placeholder: |
-    Ex : Le rôle PROJECT_MANAGER est destiné aux utilisateurs
-    de l'espace d'administration pour gérer des projets.
+    Ex :Le rôle PROJECT_MANAGER est attribué aux 
+      utilisateurs responsables de la supervision,
+      de la planification et de l'exécution des projets....
 
   #UserpermissionRole
   user_permission_user_list: "Utilisateurs"
@@ -30,4 +31,12 @@ list:
   permission_role_name: Nom
   permission_role_context: Context
   permission_role_description: Description
+  permission_role_createdBy: Créer par
 
+filter:
+  name: |
+     Filtre par nom de role Ex: PROJECT_MANAGER
+  context: | 
+    Filtre par context Ex: Domaine = UI/UX Design
+  createdBy: |
+    Filtre par créateur du role Ex: WLINDABLA Franck

@@ -1,7 +1,12 @@
 label_list_admin_user: Liste des administrateurs
 label_list_member_user: Listes des Membres
+#Action
 label_list_domain_action: Liste des domaines d'action des ministres
 label_list_group_action: Liste des groupes d'action des ministres
+#Permission
 permission:
   role: "Liste des rôles et permissions disponibles"
   user: "Liste des rôles et permissions attribués aux utilisateurs"
+#Log
+label_list_logger_login: Traçabilité des Authentifications
+label_list_activity_log: Historique Opérationnel du Système

@@ -16,9 +16,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Voter;
 
-use App\Domain\User\BaseUserInterface;
-use App\Domain\User\AdminUserInterface;
-use App\Domain\User\MemberUserInterface;
+use App\Domain\User\Model\BaseUserInterface;
+use App\Domain\User\Model\AdminUserInterface;
+use App\Domain\User\Model\MemberUserInterface;
 use App\Domain\Security\UserProfileEditPermissionsInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;

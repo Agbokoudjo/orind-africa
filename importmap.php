@@ -20,6 +20,10 @@ return [
         'path' => './assets/admin.js',
         'entrypoint' => true,
     ],
+    'login' => [
+        'path' => './assets/login.js',
+        'entrypoint' => true,
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],
@@ -29,11 +33,8 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
-    '@wlindabla/form_validator' => [
-        'version' => '2.0.1',
-    ],
     'libphonenumber-js' => [
-        'version' => '1.12.9',
+        'version' => '1.12.24',
     ],
     'image-validator' => [
         'version' => '1.2.1',
@@ -42,7 +43,7 @@ return [
         'version' => '5.5.3',
     ],
     'pdfjs-dist' => [
-        'version' => '5.3.93',
+        'version' => '5.4.296',
     ],
     'xlsx' => [
         'version' => '0.18.5',
@@ -55,6 +56,9 @@ return [
         'type' => 'css',
     ],
     'sweetalert2' => [
-        'version' => '11.23.0',
+        'version' => '11.26.2',
+    ],
+    '@wlindabla/form_validator' => [
+        'version' => '2.1.1',
     ],
 ];

@@ -16,11 +16,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistance;
 
-use App\Domain\User\LoggerLoginUser;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Domain\User\Model\LoggerLoginUser;
 use Sonata\Doctrine\Entity\BaseEntityManager;
 use App\Domain\User\Manager\LoggerLoginUserManagerInterface;
-use App\Domain\User\Service\CanonicalFieldsUpdaterInterface;
 use App\Infrastructure\Doctrine\Entity\User\LoggerLoginUserEntity;
 
 /**
@@ -31,8 +30,7 @@ final class LoggerLoginUserManager extends BaseEntityManager implements LoggerLo
 {
 
     public function __construct(
-        ManagerRegistry $registry,
-        private CanonicalFieldsUpdaterInterface $canonicalFieldsUpdater
+        ManagerRegistry $registry
     ) {
         parent::__construct(LoggerLoginUserEntity::class, $registry);
     }

@@ -3,12 +3,25 @@ framework:
         failure_transport: failed
 
         transports:
-            # https://symfony.com/doc/current/messenger.html#transport-configuration
+            # 1. Transport pour les EMAILS (Utilise Redis)
+            email_transport:
+                dsn: '%env(MESSENGER_TRANSPORT_EMAIL_DSN)%'
+                
+            # 2. Transport pour les TÂCHES LOURDES (Utilise Beanstalkd)
+            async_app_transport:
+                dsn: '%env(MESSENGER_TRANSPORT_APP_DSN)%'
+              
             async:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 options:
-                    use_notify: true
-                    check_delayed_interval: 60000
+                    # ssl:
+                    #     allow_self_signed: true
+                    #     capture_peer_cert: true
+                    #     capture_peer_cert_chain: true
+                    #     disable_compression: true
+                    #     SNI_enabled: true
+                    #     verify_peer: true
+                    #     verify_peer_name: true
                 retry_strategy:
                     max_retries: 3
                     multiplier: 2
@@ -21,7 +34,7 @@ framework:
             messenger.bus.default: []
 
         routing:
-            Symfony\Component\Mailer\Messenger\SendEmailMessage: async
+            Symfony\Component\Mailer\Messenger\SendEmailMessage: email_transport
             Symfony\Component\Notifier\Message\ChatMessage: async
             Symfony\Component\Notifier\Message\SmsMessage: async
 

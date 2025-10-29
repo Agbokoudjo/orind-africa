@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Voter;
 
-use App\Domain\User\AdminUserInterface;
+use App\Domain\User\Model\AdminUserInterface;
 use App\Domain\Security\PermissionRoleInterface;
 use App\Domain\Security\ObjectPermissionInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -43,9 +43,9 @@ final class PermissionRoleVoter extends Voter implements ObjectPermissionInterfa
         $admin_user=$token->getUser();
         
         if(!$admin_user instanceof AdminUserInterface){
-            return false ;
+            return false;
         }
-
+        
         if(!$subject instanceof PermissionRoleInterface){
             return false ;
         }
@@ -62,7 +62,12 @@ final class PermissionRoleVoter extends Voter implements ObjectPermissionInterfa
             return true ;
         }
 
-        $role_permission_role=\sprintf('ROLE_SONATA_ADMIN_PERMISSION_ROLE_%s',$attribute);
-        return $this->authorizationCheckerForUser->isGranted($role_permission_role,$subject) ;
+        $role_permission_role=$attribute ;
+        if(\is_string($attribute) && !str_starts_with($attribute, 'ROLE_')){
+
+            $role_permission_role = \sprintf('ROLE_SONATA_ADMIN_PERMISSION_ROLE_%s', $attribute);
+        }
+       
+        return $this->authorizationCheckerForUser->isGranted($role_permission_role, $subject) ;
     }
 }

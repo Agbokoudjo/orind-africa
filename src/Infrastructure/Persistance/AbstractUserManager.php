@@ -15,10 +15,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistance;
 
-use App\Domain\User\BaseUserInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Domain\User\Model\BaseUserInterface;
 use Sonata\Doctrine\Entity\BaseEntityManager;
 use App\Domain\User\Service\CanonicalFieldsUpdaterInterface;
+use App\Infrastructure\Persistance\CustomUserManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -38,6 +39,7 @@ abstract class AbstractUserManager extends BaseEntityManager implements CustomUs
     }
 
     abstract public function getFQCN():string;
+    
     public function updatePassword(BaseUserInterface $user): void
     {
         if (!$user instanceof PasswordAuthenticatedUserInterface) {
@@ -85,5 +87,10 @@ abstract class AbstractUserManager extends BaseEntityManager implements CustomUs
     public function findUserByConfirmationToken(string $token): ?BaseUserInterface
     {
         return $this->findOneBy(['confirmationToken' => $token]);
+    }
+
+    public function findUserBySlug(string $slug): ?BaseUserInterface
+    {
+        return $this->findOneBy(['slug' => $slug]);
     }
 }

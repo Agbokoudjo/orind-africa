@@ -15,15 +15,16 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Doctrine\Entity\User;
 
-use App\Domain\User\AbstractUser;
+use libphonenumber\PhoneNumber;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Domain\User\Model\AbstractUser;
 use Symfony\Component\HttpFoundation\File\File;
-use App\Infrastructure\Doctrine\CustomUserInterface;
-use libphonenumber\PhoneNumber;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-use App\Infrastructure\Doctrine\Entity\User\MemberUser;
+use App\Infrastructure\Doctrine\CustomUserInterface;
 use App\Infrastructure\Doctrine\Entity\User\AdminUser;
+use App\Infrastructure\Doctrine\Entity\User\MemberUser;
+
 /**
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
  * @package <https://github.com/Agbokoudjo/>
@@ -74,11 +75,20 @@ abstract class SonataUser extends AbstractUser implements CustomUserInterface
     #[ORM\Column(type: 'datetime', nullable: true)]
     protected ?\DateTimeInterface $lastLogin = null;
 
-    #[ORM\Column(type: 'string', length: 180, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     protected ?string $confirmationToken = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
+    protected ?\DateTimeInterface $tokenRequestedAt = null;
+
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    protected bool $isEmailVerified = false;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
     protected ?\DateTimeInterface $passwordRequestedAt = null;
+
+    #[ORM\Column(type: "datetime_immutable", nullable: true)]
+    protected ?\DateTimeImmutable $emailVerifiedAt = null;
 
     #[ORM\Column(type: "datetime_immutable")]
     protected ?\DateTimeInterface $createdAt = null;

@@ -3,9 +3,15 @@ import './bootstrap.js';
 import Swal from 'sweetalert2'
 import {  addErrorMessageFieldDom, clearErrorInput } from '@wlindabla/form_validator';
 import { reservedRolesValidator } from './libs/ReservedRolesInputValidator.js';
+import { formValidate } from "./js/form.js";
 window.Swal = Swal;
 
-jQuery(function () {
+jQuery(function init() {
+    formValidate();
+    reservedRoleValidate();
+})
+
+function reservedRoleValidate() {
     const inputReservedRoleValidate = jQuery('[data-input-reserved-roles-validate="true"]');
     
     if (inputReservedRoleValidate.length > 0) {
@@ -17,30 +23,28 @@ jQuery(function () {
             const target = jQuery(event.target);
             const inputName = target.attr('name');
             
-            clearErrorInput(target); 
-            
             try {
                 
                 const rolesJson = target.attr('data-reserved-roles') || '[]';
-                const reservedRolesArray = JSON.parse(rolesJson); 
+                const reservedRolesArray = JSON.parse(rolesJson);
 
                 reservedRolesValidator.validate(
                     target.val(), // La valeur de l'input
                     inputName,
-                    { reservedRoles: reservedRolesArray } 
+                    { reservedRoles: reservedRolesArray }
                 );
 
                 // Récupérer le statut après l'exécution du validateur
-                const { validatorStatus, errorMessage } = reservedRolesValidator.getValidatorStatus(inputName);
+                const { isValid, errors } = reservedRolesValidator.getState(inputName);
                 
                 // Si validatorStatus est FALSE (échec de la validation), afficher l'erreur
-                if (!validatorStatus) { 
-                    addErrorMessageFieldDom(target, errorMessage);
+                if (!isValid) {
+                    addErrorMessageFieldDom(target, errors);
                 }
                 
             } catch (e) {
                 console.error("Erreur de validation ou JSON invalide:", e);
-                // adddErrorMessageFieldDom(target, 'Erreur de configuration du validateur.');
+                throw new Error(`Erreur de validation ou JSON invalide:${e}`)
             }
         });
 
@@ -50,9 +54,9 @@ jQuery(function () {
         inputReservedRoleValidate.on('input', function (event) {
             const target = jQuery(event.target);
             clearErrorInput(target);
-            reservedRolesValidator.clearError(target.attr('name'));
+            reservedRolesValidator.formErrorStore.clearFieldState(target.attr('name'));
         });
     }
-});
+}
 
 

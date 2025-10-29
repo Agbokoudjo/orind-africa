@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Security;
 
+use App\Domain\ModelTrait\CreatedAtTrait;
+use App\Domain\ModelTrait\UpdatedAtTrait;
+use App\Domain\User\Model\AdminUserInterface;
 use App\Domain\Security\PermissionRoleInterface;
-use App\Domain\User\AdminUserInterface;
 
 /**
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
@@ -30,6 +32,9 @@ use App\Domain\User\AdminUserInterface;
  */
 abstract class PermissionRole implements PermissionRoleInterface
 {
+    use CreatedAtTrait ;
+    use UpdatedAtTrait ;
+    
     protected int|string|null $id=null;
 
     protected ?string $name=null;
@@ -39,6 +44,7 @@ abstract class PermissionRole implements PermissionRoleInterface
     protected ?string $context=null ;
 
     protected  ?AdminUserInterface $createdBy = null;
+
     /**
      * Get the value of id
      */

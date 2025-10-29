@@ -16,15 +16,15 @@ declare(strict_types=1);
 
 namespace App\UI\Console;
 
-use App\Application\UseCase\Command\PromoteUserCommand;
-use App\Application\UseCase\CommandHandler\PromoteUserCommandHandler;
+use App\Domain\User\Enum\UserType;
 use Symfony\Component\Console\Command\Command;
+use App\Domain\User\Message\PromoteUserCommand;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Output\OutputInterface;
-use App\Infrastructure\Doctrine\Entity\User\AdminUser;
+use App\Application\UseCase\User\PromoteUserCommandHandler;
 
 /**
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
@@ -70,7 +70,7 @@ final class PromoteAdminUserCommand extends Command
          * @var array
          */
         $roles = $helper->ask($input, $output, $question);
-        $this->promoteUser->handler(AdminUser::class,new PromoteUserCommand($username,$roles));
+        $this->promoteUser->handle(UserType::ADMIN,new PromoteUserCommand($username,$roles));
 
         return Command::SUCCESS;
     }

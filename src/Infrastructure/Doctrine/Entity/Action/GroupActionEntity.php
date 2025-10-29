@@ -18,15 +18,15 @@ namespace App\Infrastructure\Doctrine\Entity\Action;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Domain\Action\GroupAction;
-use App\Domain\User\AdminUserInterface;
-use App\Domain\User\MemberUserInterface;
 use Doctrine\Common\Collections\Collection;
+use App\Domain\User\Model\AdminUserInterface;
+use App\Domain\User\Model\MemberUserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Domain\Action\DomainActionMinisterInterface;
+use App\Infrastructure\Doctrine\Entity\User\AdminUser;
 use App\Infrastructure\Doctrine\Entity\User\MemberUser;
 use App\Infrastructure\Doctrine\Entity\Action\DomainActionMinisterEntity;
 use App\Infrastructure\Doctrine\Entity\Action\Repository\GroupActionRepository;
-use App\Infrastructure\Doctrine\Entity\User\AdminUser;
 
 /**
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>

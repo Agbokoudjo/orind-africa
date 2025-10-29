@@ -15,7 +15,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Doctrine\Entity\Action\Repository;
 
-use App\Domain\User\AdminUserInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use App\Infrastructure\Doctrine\Entity\Action\DomainActionMinisterEntity;

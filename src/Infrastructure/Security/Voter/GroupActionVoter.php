@@ -15,8 +15,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Voter;
 
-use App\Domain\User\AdminUserInterface;
 use App\Domain\Action\GroupActionInterface;
+use App\Domain\User\Model\AdminUserInterface;
 use App\Domain\Security\ObjectPermissionInterface;
 use App\Domain\Action\DomainActionMinisterInterface;
 use App\Infrastructure\Doctrine\Entity\User\AdminUser;

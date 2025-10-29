@@ -16,15 +16,16 @@ declare(strict_types=1);
 
 namespace App\UI\Console;
 
+use App\Domain\User\Enum\UserType;
 use App\Domain\User\Enum\AccountStatus;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
-use App\Application\UseCase\ToggleUserAccountUseCase;
 use Symfony\Component\Console\Output\OutputInterface;
 use App\Infrastructure\Doctrine\Entity\User\AdminUser;
+use App\Application\UseCase\User\ToggleUserAccountUseCase;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
@@ -68,7 +69,7 @@ final class ToggleAdminUserAccountCommand extends Command
         $status = $answer ? AccountStatus::ACTIVE : AccountStatus::INACTIVE;
 
         try {
-            $this->activateUser->handler(AdminUser::class,$username, $status);
+            $this->activateUser->handle(UserType::ADMIN,$username, $status);
         } catch (\InvalidArgumentException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
             return Command::FAILURE;
