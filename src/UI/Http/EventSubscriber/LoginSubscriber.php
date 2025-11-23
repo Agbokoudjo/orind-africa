@@ -20,13 +20,12 @@ use Psr\Log\LoggerInterface;
 use App\Domain\Log\Enum\ActivityAction;
 use App\Domain\User\Model\BaseUserInterface;
 use App\Domain\Log\Command\ActivityLogCommand;
+use App\Domain\User\Message\RecordLoginMessage;
 use App\Infrastructure\Utility\UserContextTrait;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Http\SecurityEvents;
 use App\Application\UseCase\User\LoggerLoginUseCase;
 use App\Domain\User\Service\Resolver\UserTypeResolver;
 use App\Application\Queue\AsyncMethodDispatcherInterface;
-use App\Domain\User\Exception\UnresolvableUserTypeException;
 use Symfony\Component\Security\Http\Event\LoginFailureEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
@@ -61,6 +60,7 @@ final class LoginSubscriber implements EventSubscriberInterface{
     public function __construct(
         private readonly AsyncMethodDispatcherInterface $asyncDispatcher,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly LoggerLoginUseCase $loggerLoginUseCase,
         private readonly ?LoggerInterface $logger = null
     ) {}
 
@@ -129,9 +129,9 @@ final class LoginSubscriber implements EventSubscriberInterface{
         if (!$this->isListenerEnabled()) {
             return;
         }
-
+    
         $user = $event->getAuthenticationToken()->getUser();
-
+        
         if (!$user instanceof BaseUserInterface) {
             $this->logger?->debug('Utilisateur non valide pour mise à jour lastLogin', [
                 'user_class' => $user ? $user::class : 'null',
@@ -140,10 +140,15 @@ final class LoginSubscriber implements EventSubscriberInterface{
         }
 
         try {
+            $userTypeContextLoggerLogin=UserTypeResolver::resolveFromUser($user);
             $this->asyncDispatcher->dispatch(
                 LoggerLoginUseCase::class,
                 'recordLogin',
-                [$user, $event->getRequest()->getClientIp()]
+                [new RecordLoginMessage(
+                    $user->getId(), 
+                    $userTypeContextLoggerLogin, 
+                    $event->getRequest()->getClientIp()
+                )]
             );
 
             $this->logger?->info('Mise à jour lastLogin dispatchée', [
@@ -185,6 +190,12 @@ final class LoginSubscriber implements EventSubscriberInterface{
         try {
             $userContext = $this->extractUserContext($user);
             $request = $event->getRequest();
+            $session = $request->getSession();
+            // ✅ Récupérer le timestamp de connexion
+            $loginTimestamp = $session?->get(self::SESSION_KEY);
+            $sessionStartedAt = $loginTimestamp
+                ? (new \DateTimeImmutable())->setTimestamp($loginTimestamp)->format('Y-m-d H:i:s')
+                : null;
 
             $loginCommand = new ActivityLogCommand(
                 userContext: $userContext,
@@ -196,6 +207,7 @@ final class LoginSubscriber implements EventSubscriberInterface{
                     'user_agent' => $request->headers->get('User-Agent'),
                     'session_id' => $request->getSession()?->getId(),
                     'referer' => $request->headers->get('Referer'),
+                    'session_started_at' => $sessionStartedAt
                 ]
             );
 

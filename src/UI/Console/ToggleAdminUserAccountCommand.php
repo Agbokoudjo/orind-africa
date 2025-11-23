@@ -24,7 +24,6 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Output\OutputInterface;
-use App\Infrastructure\Doctrine\Entity\User\AdminUser;
 use App\Application\UseCase\User\ToggleUserAccountUseCase;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 

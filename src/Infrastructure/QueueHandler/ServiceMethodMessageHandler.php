@@ -20,10 +20,12 @@ use Psr\Container\ContainerInterface;
 use App\Application\UseCase\User\LoggerLoginUseCase;
 use App\Application\Queue\Message\ServiceMethodMessage;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use App\Application\UseCase\User\ToggleUserAccountUseCase;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use App\Application\UseCase\User\UpdateUserProfileCommandHandler;
-use App\Application\QueueHandler\ServiceMethodMessageHandlerInterface;
+use App\Application\UseCase\User\UpdatePasswordUserCommandHandler;
 use App\Application\UseCase\CommandHandler\ActivityLogCommandHandler;
+use App\Application\QueueHandler\ServiceMethodMessageHandlerInterface;
 
 /**
  * Classe ServiceMethodMessageHandler
@@ -53,7 +55,9 @@ final class ServiceMethodMessageHandler implements ServiceSubscriberInterface,Se
         return [
             LoggerLoginUseCase::class,
             UpdateUserProfileCommandHandler::class,
-            ActivityLogCommandHandler::class
+            ActivityLogCommandHandler::class,
+            ToggleUserAccountUseCase::class,
+            UpdatePasswordUserCommandHandler::class
         ];
     }
 

@@ -54,7 +54,7 @@ abstract class SonataUser extends AbstractUser implements CustomUserInterface
     #[ORM\Column(type: "json", options: ['jsonb' => true])]
     protected array $roles = [];
 
-    #[ORM\Column(type: "string")]
+    #[ORM\Column(type: "string",nullable: true)]
     protected ?string $slug = null;
 
     #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
@@ -82,7 +82,7 @@ abstract class SonataUser extends AbstractUser implements CustomUserInterface
     protected ?\DateTimeInterface $tokenRequestedAt = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    protected bool $isEmailVerified = false;
+    protected bool $emailVerified = false;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     protected ?\DateTimeInterface $passwordRequestedAt = null;
@@ -97,10 +97,22 @@ abstract class SonataUser extends AbstractUser implements CustomUserInterface
     protected ?\DateTimeInterface $updatedAt = null;
 
     #[Vich\UploadableField(mapping: 'avatars', fileNameProperty: 'avatarName')]
-    private ?File $avatarFile = null;
+    protected ?File $avatarFile = null;
+
+    /**
+     * Timestamp pour Vich (obligatoire)
+     */
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    protected ?\DateTimeInterface $avatarUpdatedAt = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $avatarName = null;
+    protected ?string $avatarName = null;
+
+    /**
+     * Timestamp pour Vich (obligatoire)
+     */
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    protected ?\DateTimeInterface $documentUpdatedAt = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
     protected ?string $documentName;
@@ -131,7 +143,7 @@ abstract class SonataUser extends AbstractUser implements CustomUserInterface
     {
         return $this->profile;
     }
-
+ 
     /**
      * Set the value of profile
      */
@@ -203,6 +215,10 @@ abstract class SonataUser extends AbstractUser implements CustomUserInterface
     public function setDocumentfile(?File $documentfile): void
     {
         $this->documentfile = $documentfile;
+
+        if (null !== $documentfile) {
+            $this->documentUpdatedAt =new \DateTime('now',new \DateTimeZone('UTC'));
+        }
     }
 
     public function getAvatarFile(): ?File
@@ -213,6 +229,10 @@ abstract class SonataUser extends AbstractUser implements CustomUserInterface
     public function setAvatarFile(?File $avatarFile=null): void
     {
         $this->avatarFile = $avatarFile;
+
+        if (null !== $avatarFile) {
+            $this->avatarUpdatedAt = new \DateTime('now',new \DateTimeZone('UTC'));
+        }
     }
 
     public function getAvatarName(): ?string
@@ -223,5 +243,25 @@ abstract class SonataUser extends AbstractUser implements CustomUserInterface
     public function setAvatarName(?string $avatarName): void
     {
         $this->avatarName = $avatarName;
+    }
+
+    public function getDocumentUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->documentUpdatedAt;
+    }
+
+    public function setDocumentUpdatedAt(?\DateTimeInterface $documentUpdatedAt): void
+    {
+        $this->documentUpdatedAt = $documentUpdatedAt;
+    }
+
+    public function getAvatarUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->avatarUpdatedAt;
+    }
+
+    public function setAvatarUpdatedAt(?\DateTimeInterface $avatarUpdatedAt): void
+    {
+        $this->avatarUpdatedAt = $avatarUpdatedAt;
     }
 }

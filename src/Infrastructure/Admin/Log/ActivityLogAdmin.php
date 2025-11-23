@@ -15,18 +15,19 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Admin\Log;
 
+use Sonata\Form\Type\DateRangeType;
 use App\Domain\Log\Enum\ActivityAction;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Sonata\Form\Type\DateTimeRangeType;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use App\Infrastructure\Admin\WlindablaAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\DoctrineORMAdminBundle\Filter\ChoiceFilter;
 use Sonata\DoctrineORMAdminBundle\Filter\StringFilter;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Sonata\DoctrineORMAdminBundle\Filter\DateRangeFilter;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use App\Infrastructure\Doctrine\Entity\Log\ActivityLogEntity;
-use Sonata\DoctrineORMAdminBundle\Filter\DateTimeRangeFilter;
 use App\UI\Http\Controller\Admin\Log\ActivityLogCRUDController;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use App\Infrastructure\Security\Handler\ActivityLogSecurityHandler;
@@ -52,7 +53,8 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
         'translation_domain' => 'Admin',
         'show_in_roles_matrix' => true,
         'roles' => ['ROLE_AUDITOR_ACTIVITY_LOG'],
-        'security_handler' => ActivityLogSecurityHandler::class
+        'security_handler' => ActivityLogSecurityHandler::class,
+        'pager_type' => 'simple'
     ]
 )]
 final class ActivityLogAdmin extends WlindablaAdmin
@@ -65,18 +67,9 @@ final class ActivityLogAdmin extends WlindablaAdmin
         parent::__construct("label_list_activity_log", "label_show_activity_log");
     }
 
-    // ----------------------------------------------------------------
-    // 1. Vue Liste (ListMapper)
-    // ----------------------------------------------------------------
     protected function configureListFields(ListMapper $list): void
     {
         $list
-            // Audit/ID
-            ->add('id', FieldDescriptionInterface::TYPE_IDENTIFIER, [
-                'label' => 'audit.id',
-            'translation_domain' => 'logger',
-            ])
-
             // Qui (Utilisateur)
             ->add('userContext', FieldDescriptionInterface::TYPE_ARRAY, [
                 'label' => 'audit.user',
@@ -85,17 +78,18 @@ final class ActivityLogAdmin extends WlindablaAdmin
             ])
 
             // Quoi (Action)
-            // ->add('action', FieldDescriptionInterface::TYPE_STRING, [
-            //     'label' => 'audit.action',
-            //     'header_style' => 'width: 15%; text-align: center',
-            //     'row_align' => 'center',
-            // 'translation_domain' => 'logger',
-            // ])
+            ->add('action', FieldDescriptionInterface::TYPE_STRING, [
+                'label' => 'audit.action',
+                'header_style' => 'width: 15%; text-align: center',
+                'row_align' => 'center',
+                'translation_domain' => 'logger',
+                'template'=> "bundles/SonataAdminBundle/CRUD/list_activity_action.html.twig"
+            ])
 
             // Où (Route)
             ->add('route', FieldDescriptionInterface::TYPE_STRING, [
                 'label' => 'audit.route',
-            'translation_domain' => 'logger',
+                'translation_domain' => 'logger',
             ])
 
             // Comment (Méthode)
@@ -104,8 +98,16 @@ final class ActivityLogAdmin extends WlindablaAdmin
                 'header_style' => 'width: 8%; text-align: center',
                 'row_align' => 'center',
             'translation_domain' => 'logger',
+            'template'=> 'bundles/SonataAdminBundle/CRUD/list_field_method.html.twig'
             ])
-
+            ->add(
+                'ipAddress',
+                FieldDescriptionInterface::TYPE_STRING,
+                [
+                    'label' => 'audit.ip_address',
+                    'translation_domain' => 'logger',
+                ]
+            )
             // Quand (Date)
             ->add('createdAt', FieldDescriptionInterface::TYPE_DATETIME, [
                 'label' => 'audit.created_at',
@@ -114,7 +116,6 @@ final class ActivityLogAdmin extends WlindablaAdmin
                 'row_align' => 'right',
             'translation_domain' => 'logger',
             ])
-
             // Actions
             ->add(ListMapper::NAME_ACTIONS, null, [
                 'label' => 'global.audit',
@@ -126,52 +127,65 @@ final class ActivityLogAdmin extends WlindablaAdmin
         ;
     }
 
-    // ----------------------------------------------------------------
-    // 2. Vue Détail (ShowMapper)
-    // ----------------------------------------------------------------
-
     protected function configureShowFields(ShowMapper $show): void
     {
         $show
             ->with('Identité de l\'Action', ['class' => 'col-md-5'])
-            ->add('id', FieldDescriptionInterface::TYPE_INTEGER, ['label' => 'audit.id'])
-            ->add('createdAt', FieldDescriptionInterface::TYPE_DATETIME, ['label' => 'audit.created_at', 'format' => 'd/m/Y H:i:s'])
-            ->add('action', FieldDescriptionInterface::TYPE_STRING, ['label' => 'audit.action'])
-            ->add('method', FieldDescriptionInterface::TYPE_STRING, ['label' => 'audit.method'])
+                ->add('id', FieldDescriptionInterface::TYPE_INTEGER, 
+                     ['label' => 'audit.id', 
+                     'translation_domain' => 'logger']
+                )
+                ->add('createdAt', FieldDescriptionInterface::TYPE_DATETIME, 
+                    ['label' => 'audit.created_at', 
+                    'format' => 'd/m/Y H:i:s',
+                    'translation_domain' => 'logger',
+                    ])
+                ->add('action', FieldDescriptionInterface::TYPE_STRING, [
+                    'label' => 'audit.action',
+                    'translation_domain' => 'logger',
+                    'template' => "bundles/SonataAdminBundle/CRUD/show_activity_action.html.twig"
+                ])
+                ->add('method', FieldDescriptionInterface::TYPE_STRING, [
+                    'label' => 'audit.method',
+                    'translation_domain' => 'logger',
+                'template' => 'bundles/SonataAdminBundle/CRUD/show_field_method.html.twig'
+                ])
             ->end()
 
             ->with('Auteur', ['class' => 'col-md-7'])
-            // Le Contexte Utilisateur est essentiel ici (qui a fait quoi)
-            ->add('userContext', FieldDescriptionInterface::TYPE_ARRAY, [
-                'label' => 'audit.user_details',
-                // On peut aussi utiliser un template ici pour un rendu plus propre du JSON
-            ])
-            ->add('ipAddress', FieldDescriptionInterface::TYPE_STRING, ['label' => 'audit.ip_address'])
+                ->add('userContext', FieldDescriptionInterface::TYPE_ARRAY, [
+                    'label' => 'audit.user',
+                    'template' => 'bundles/SonataAdminBundle/CRUD/show_user_context.html.twig',
+                    'translation_domain' => 'logger',
+                ])
+                ->add('ipAddress', FieldDescriptionInterface::TYPE_STRING, 
+                    ['label' => 'audit.ip_address',
+                    'translation_domain' => 'logger',
+                ])
             ->end()
 
             ->with('Contexte Technique & Changements', ['class' => 'col-md-12'])
-            ->add('route', FieldDescriptionInterface::TYPE_STRING, ['label' => 'audit.route'])
+                ->add('route', FieldDescriptionInterface::TYPE_STRING, [
+                    'label' => 'audit.route',
+                    'translation_domain' => 'logger',
+                ])
             // Le Contexte (données supplémentaires, user-agent, route params, changes)
-            ->add('context', FieldDescriptionInterface::TYPE_ARRAY, [
-                'label' => 'audit.context_data',
-                // Rendre le JSON lisible avec des <pre>
-                'template' => 'admin/activity_log/show_json_data.html.twig',
-            ])
+                ->add('context', FieldDescriptionInterface::TYPE_ARRAY, [
+                    'label' => 'audit.context_data',
+                    'translation_domain' => 'logger',
+                    'template' => 'bundles/SonataAdminBundle/CRUD/show_user_context_requete.html.twig',
+                ])
             ->end()
         ;
     }
 
-    // ----------------------------------------------------------------
-    // 3. Filtres Grille de Données (DatagridMapper)
-    // ----------------------------------------------------------------
-
-   /* protected function configureDatagridFilters(DatagridMapper $datagrid): void
+   protected function configureDatagridFilters(DatagridMapper $datagrid): void
     {
         $datagrid
-            ->add('createdAt', DateTimeRangeFilter::class, [
+            ->add('createdAt', DateRangeFilter::class, [
             'label' => 'audit.created_at',
-                'field_type' => DateTimeRangeType::class,
-               
+                'field_type' => DateRangeType::class,
+                'translation_domain' => 'logger',
                 'field_options' => [
                     // Configure le type de champ pour la date/heure
                     'field_options_start' => [
@@ -182,39 +196,57 @@ final class ActivityLogAdmin extends WlindablaAdmin
                         'widget' => 'single_text',
                         // 'format' => 'yyyy-MM-dd HH:mm',
                     ],
-                ],
+                ], 
             ])
             // Filtre d'Action (par Enum)
             ->add('action', ChoiceFilter::class, [
                 'label' => 'audit.action',
+                'translation_domain' => 'logger',
                 'field_type' => ChoiceType::class,
                 'field_options' => [
-                    // Générer les choix à partir de l'Enum (valeurs de 'PAGE_VIEW', 'LOGIN_SUCCESS', etc.)
                     'choices' => $this->getActionChoices(),
-                    'choice_translation_domain' => 'audit', // Traduire les clés d'actions si nécessaire
+                    'choice_translation_domain' => 'activity_log', 
                 ],
+            'show_filter' => true,
             ])
 
             // Filtre IP (pour les investigations de sécurité)
             ->add('ipAddress', StringFilter::class, [
                 'label' => 'audit.ip_address',
+                'translation_domain' => 'logger',
+                'field_type' => TextType::class,
             ])
 
             // Filtre Route
             ->add('route', StringFilter::class, [
                 'label' => 'audit.route',
+                'translation_domain' => 'logger',
+                'field_type' => TextType::class,
             ])
 
             // Filtre Méthode
             ->add('method', ChoiceFilter::class, [
                 'label' => 'audit.method',
+                'translation_domain' => 'logger',
                 'field_type' => ChoiceType::class,
+                'show_filter' => true,
                 'field_options' => [
-                    // Les méthodes sont fixes (GET, POST, PUT, DELETE)
-                    'choices' => ['GET' => 'GET', 'POST' => 'POST', 'PUT' => 'PUT', 'DELETE' => 'DELETE'],
+                    'choices' => [
+                        'GET' => 'GET',
+                        'POST' => 'POST',
+                        'PUT' => 'PUT',
+                        'DELETE' => 'DELETE',
+                        'PATCH' => 'PATCH',
+                        'HEAD' => 'HEAD',
+                        'OPTIONS' => 'OPTIONS',
+                        'TRACE' => 'TRACE',
+                        'CONNECT' => 'CONNECT',
+                        'PURGE' => 'PURGE'
+                    ],
+                    'choice_translation_domain' => 'httpMethod'
                 ],
             ])
-
+           
             // // Filtre par Contexte Utilisateur (via ID, si connu)
             // // Nécessite une configuration ORM spéciale ou un filtre personnalisé pour rechercher dans le JSONB
             // ->add('userContext.id', StringFilter::class, [
@@ -224,7 +256,7 @@ final class ActivityLogAdmin extends WlindablaAdmin
             //     // ce filtre fonctionne si Doctrine est correctement configuré (avec DQL).
             // ])
         ;
-    }*/
+    }
 
     /**
      * @return array<string, string>

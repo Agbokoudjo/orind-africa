@@ -18,21 +18,62 @@ namespace App\Infrastructure\Persistance\Registry;
 
 use App\Infrastructure\Persistance\CustomUserManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use App\Infrastructure\Persistance\Registry\AbstractUserManagerRegistry;
+use App\Domain\User\Enum\UserType;
+use App\Domain\User\Model\BaseUserInterface;
+use App\Domain\User\Manager\UserManagerInterface;
+use App\Infrastructure\Doctrine\Entity\User\AdminUser;
+use App\Infrastructure\Doctrine\Entity\User\MemberUser;
+use App\Domain\User\Exception\UserManagerNotFoundException;
+use App\Domain\User\Service\Registry\UserManagerRegistryInterface;
 
 /**
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
  * @package <https://github.com/Agbokoudjo/>
  */
-final class UserManagerRegistry extends AbstractUserManagerRegistry
+final class UserManagerRegistry implements UserManagerRegistryInterface
 {
+    /**
+     * @var iterable<string, UserManagerInterface>
+     */
+    protected iterable $managers = [];
     /**
      * @param iterable<CustomUserManagerInterface> $managers
      */
     public function __construct(
-        #[AutowireIterator('app.user.manager')]
-        iterable $managers)
+        #[AutowireIterator('app.user_manager')]
+        iterable $managers
+    ) {
+        foreach ($managers as $manager) {
+            $this->managers[$manager->getFQCN()] = $manager;
+        }
+    }
+
+
+    public function getByUser(string|BaseUserInterface $user): UserManagerInterface
     {
-        parent::__construct($managers);
+        $class = is_object($user) ? get_class($user) : $user;
+
+        if (!isset($this->managers[$class])) {
+            throw new UserManagerNotFoundException($class);
+        }
+
+        return $this->managers[$class];
+    }
+
+    public function getByUserType(UserType $userType): UserManagerInterface
+    {
+        $targetClass = match ($userType) {
+
+            UserType::ADMIN => AdminUser::class,
+
+            UserType::MEMBER => MemberUser::class,
+
+            // Gestion de l'exception pour les types non supportés
+            default => throw new UserManagerNotFoundException(
+                sprintf('Aucun modèle/manager supporté trouvé pour UserType: %s', $userType->name)
+            ),
+        };
+
+        return $this->getByUser($targetClass);
     }
 }

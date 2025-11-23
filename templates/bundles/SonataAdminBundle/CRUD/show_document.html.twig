@@ -1,0 +1,9 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% import 'bundles/SonataAdminBundle/CRUD/display_document.html.twig' as _macro_render_document  %}
+
+{% block field %}
+	{% set  dateobject = object.updatedAt|date('Y-m-d H-i-s')  %}
+	{% set  idobject = object.id ~ '-' ~ '-' ~ dateobject ~ "-" ~ admin.code %}
+    {{ _macro_render_document.render_document(field_description,object,idobject,CACHE_DOCUMENT_TWIG,idobject,null) }}
+{% endblock %}

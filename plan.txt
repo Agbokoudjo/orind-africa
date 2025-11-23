@@ -1,0 +1,307 @@
+src/
+├── Application
+│   ├── Bus
+│   │   └── EventBusInterface.php
+│   ├── Listener
+│   │   ├── PromoteUserSubscriberInterface.php
+│   │   └── ToggleUserAccountEventSubscriberInterface.php
+│   ├── Queue
+│   │   ├── AsyncMethodDispatcherInterface.php
+│   │   └── Message
+│   │       └── ServiceMethodMessage.php
+│   ├── QueueHandler
+│   │   └── ServiceMethodMessageHandlerInterface.php
+│   ├── Security
+│   │   └── SecurityContextInterface.php
+│   ├── Service
+│   │   ├── Authorization
+│   │   │   ├── AuthorizationCheckerForUserInterface.php
+│   │   │   └── AuthorizationCheckerForUser.php
+│   │   ├── GenerateTemporaryPasswordService.php
+│   │   ├── LocaleProviderInterface.php
+│   │   ├── SecureTokenService.php
+│   │   └── TranslatorInterface.php
+│   └── UseCase
+│       ├── CommandHandler
+│       │   └── ActivityLogCommandHandler.php
+│       └── User
+│           ├── LoggerLoginUseCase.php
+│           ├── PromoteUserCommandHandler.php
+│           ├── PromoteUserToSuperAdminCommandHandler.php
+│           ├── ToggleUserAccountUseCase.php
+│           ├── UpdatePasswordUserCommandHandler.php
+│           ├── UpdateUserProfileCommandHandler.php
+│           └── UserCreateCommandHandler.php
+├── Domain
+│   ├── Action
+│   │   ├── DomainActionMinisterInterface.php
+│   │   ├── Domain.php
+│   │   ├── GroupActionInterface.php
+│   │   └── GroupAction.php
+│   ├── Log
+│   │   ├── ActivityLog.php
+│   │   ├── ActivityLogRepositoryInterface.php
+│   │   ├── Command
+│   │   │   └── ActivityLogCommand.php
+│   │   ├── Enum
+│   │   │   └── ActivityAction.php
+│   │   └── Manager
+│   │       └── ActivityLogManagerInterface.php
+│   ├── Manager
+│   │   └── ManagerCRUDInterface.php
+│   ├── ModelTrait
+│   │   ├── CreatedAtTrait.php
+│   │   └── UpdatedAtTrait.php
+│   ├── Security
+│   │   ├── ObjectPermissionInterface.php
+│   │   ├── PermissionRoleInterface.php
+│   │   ├── PermissionRole.php
+│   │   ├── ReservedRoles.php
+│   │   ├── UserPermissionRoleInterface.php
+│   │   ├── UserPermissionRole.php
+│   │   ├── UserPermissionRoleRepositoryInterface.php
+│   │   └── UserProfileEditPermissionsInterface.php
+│   └── User
+│       ├── Enum
+│       │   ├── AccountStatus.php
+│       │   ├── MinisterRole.php
+│       │   ├── RoleUser.php
+│       │   ├── StatusAccount.php
+│       │   ├── UserClass.php
+│       │   └── UserType.php
+│       ├── Event
+│       │   ├── PromoteUserEvent.php
+│       │   ├── PromoteUserToSuperAdminEvent.php
+│       │   ├── ToggleUserAccountEvent.php
+│       │   ├── UpdatePasswordUserEvent.php
+│       │   └── UserAccountEmailVerificationEvent.php
+│       ├── Exception
+│       │   ├── DomainUserNotFoundException.php
+│       │   ├── EmailAlreadyVerifiedException.php
+│       │   ├── InvalidTokenException.php
+│       │   ├── UnresolvableUserTypeException.php
+│       │   └── UserManagerNotFoundException.php
+│       ├── Manager
+│       │   ├── LoggerLoginUserManagerInterface.php
+│       │   └── UserManagerInterface.php
+│       ├── Message
+│       │   ├── PromoteUserCommand.php
+│       │   ├── PromoteUserToSuperAdminCommand.php
+│       │   ├── RecordLoginMessage.php
+│       │   ├── UpdatePasswordUserCommand.php
+│       │   ├── UpdateUserProfileCommand.php
+│       │   └── UserCreateCommand.php
+│       ├── Model
+│       │   ├── AbstractUser.php
+│       │   ├── AdminUserInterface.php
+│       │   ├── BaseUserInterface.php
+│       │   ├── ClientUserInterface.php
+│       │   ├── ClientUser.php
+│       │   ├── LoggerLoginUser.php
+│       │   ├── MemberUserInterface.php
+│       │   └── SimpleUserInterface.php
+│       └── Service
+│           ├── CanonicalFieldsUpdaterInterface.php
+│           ├── Registry
+│           │   └── UserManagerRegistryInterface.php
+│           ├── Resolver
+│           │   └── UserTypeResolver.php
+│           └── Security
+│               ├── EmailVerificationInterface.php
+│               ├── Generator
+│               │   ├── PasswordGeneratorInterface.php
+│               │   └── TokenGeneratorInterface.php
+│               └── Hash
+│                   └── TokenHasherInterface.php
+├── Infrastructure
+│   ├── Admin
+│   │   ├── DomainActionMinisterAdmin.php
+│   │   ├── GroupActionAdmin.php
+│   │   ├── Log
+│   │   │   ├── ActivityLogAdmin.php
+│   │   │   └── LoggerLoginAdmin.php
+│   │   ├── Security
+│   │   │   ├── PermissionRoleAdmin.php
+│   │   │   └── UserPermissionRoleAdmin.php
+│   │   ├── User
+│   │   │   ├── AbstractUserAdmin.php
+│   │   │   ├── AdminUserAdmin.php
+│   │   │   ├── DataTransformer
+│   │   │   │   └── RoleArrayTransformer.php
+│   │   │   └── MemberUserAdmin.php
+│   │   └── WlindablaAdmin.php
+│   ├── Bus
+│   │   └── SymfonyEventBusAdapter.php
+│   ├── DependencyInjection
+│   │   └── Compiler
+│   │       └── RolesMatrixCompilerPass.php
+│   ├── Doctrine
+│   │   ├── CustomUserInterface.php
+│   │   └── Entity
+│   │       ├── Action
+│   │       │   ├── DomainActionMinisterEntity.php
+│   │       │   ├── GroupActionEntity.php
+│   │       │   └── Repository
+│   │       │       ├── DomainActionMinisterRepository.php
+│   │       │       └── GroupActionRepository.php
+│   │       ├── Log
+│   │       │   ├── ActivityLogEntity.php
+│   │       │   └── ActivityLogRepository.php
+│   │       ├── Security
+│   │       │   ├── PermissionRoleEntity.php
+│   │       │   ├── Repository
+│   │       │   │   ├── PermissionRoleRepository.php
+│   │       │   │   └── UserPermissionRoleRepository.php
+│   │       │   └── UserPermissionRoleEntity.php
+│   │       └── User
+│   │           ├── AdminUser.php
+│   │           ├── LoggerLoginUserEntity.php
+│   │           ├── MemberUser.php
+│   │           ├── Repository
+│   │           │   ├── AbstractUserRepository.php
+│   │           │   ├── AdminUserRepository.php
+│   │           │   ├── LoggerLoginUserEntityRepository.php
+│   │           │   └── MemberUserRepository.php
+│   │           └── SonataUser.php
+│   ├── EventListener
+│   │   ├── DoctrineActivityLogListener.php
+│   │   ├── Messenger
+│   │   │   ├── MessengerEmailFailureListener.php
+│   │   │   └── UpdateProfileSuccessListener.php
+│   │   └── User
+│   │       ├── PromoteUserSubscriber.php
+│   │       ├── ToggleUserAccountSubscriber.php
+│   │       ├── UpdatePasswordUserSubscriber.php
+│   │       ├── UserAccountEmailVerificationSubscriber.php
+│   │       └── UserEventSubscriber.php
+│   ├── Locale
+│   │   └── SymfonyLocaleProvider.php
+│   ├── Persistance
+│   │   ├── AbstractUserManager.php
+│   │   ├── ActivityLogManager.php
+│   │   ├── AdminUserManager.php
+│   │   ├── CustomUserManagerInterface.php
+│   │   ├── LoggerLoginUserManager.php
+│   │   ├── MemberUserManager.php
+│   │   └── Registry
+│   │       └── UserManagerRegistry.php
+│   ├── QueueHandler
+│   │   ├── AsyncMethodDispatcher.php
+│   │   └── ServiceMethodMessageHandler.php
+│   ├── Route
+│   │   └── SonataRouteGenerator.php
+│   ├── Security
+│   │   ├── BrowserValidation
+│   │   │   └── BrowserRequestValidator.php
+│   │   ├── Encryption
+│   │   │   ├── IdEncryptionInterface.php
+│   │   │   └── IdEncryptionService.php
+│   │   ├── Generator
+│   │   │   ├── RandomPasswordGenerator.php
+│   │   │   └── RandomTokenGenerator.php
+│   │   ├── Handler
+│   │   │   ├── AbstractRoleSecurityHandler.php
+│   │   │   ├── ActivityLogSecurityHandler.php
+│   │   │   ├── AdminUserRoleSecurityHandler.php
+│   │   │   ├── DomainActionSecurityHandler.php
+│   │   │   ├── GroupActionSecurityHandler.php
+│   │   │   ├── LoggerLoginSecurityHandler.php
+│   │   │   ├── MemberUserRoleSecurityHandler.php
+│   │   │   ├── PermissionRoleSecurityHandler.php
+│   │   │   └── UserPermissionRoleSecurityHandler.php
+│   │   ├── Hash
+│   │   │   └── NativeTokenHasher.php
+│   │   ├── Provider
+│   │   │   ├── AbstractUserProvider.php
+│   │   │   ├── AdminUserProvider.php
+│   │   │   └── MemberUserProvider.php
+│   │   ├── RolesBuilder
+│   │   │   ├── AdminRolesBuilderInterface.php
+│   │   │   ├── AdminRolesBuilder.php
+│   │   │   ├── ExpandableRolesBuilderInterface.php
+│   │   │   ├── MatrixRolesBuilderInterface.php
+│   │   │   ├── MatrixRolesBuilder.php
+│   │   │   ├── PermissionLabelsBuilderInterface.php
+│   │   │   ├── RolesBuilderInterface.php
+│   │   │   └── SecurityRolesBuilder.php
+│   │   ├── SymfonySecurityContextAdapter.php
+│   │   ├── Trait
+│   │   │   └── RoleTrait.php
+│   │   └── Voter
+│   │       ├── ActivityLogVoter.php
+│   │       ├── AdminUserVoter.php
+│   │       ├── DomainActionVoter.php
+│   │       ├── GroupActionVoter.php
+│   │       ├── LoggerLoginVoter.php
+│   │       ├── MemberUserVoter.php
+│   │       ├── PermissionRoleVoter.php
+│   │       ├── UserPermissionRoleVoter.php
+│   │       └── UserProfileEditVoter.php
+│   ├── Service
+│   │   ├── Mailing
+│   │   │   ├── EmailSenderInterface.php
+│   │   │   ├── MailerFactoryInterface.php
+│   │   │   ├── MailerFactory.php
+│   │   │   ├── PriorityInterface.php
+│   │   │   ├── SupportMailerInterface.php
+│   │   │   ├── SupportMailer.php
+│   │   │   └── SystemMailer.php
+│   │   ├── Security
+│   │   │   └── EmailVerificationService.php
+│   │   └── UserAccountRouteResolver.php
+│   ├── Translation
+│   │   └── SymfonyTranslatorAdapter.php
+│   ├── Twig
+│   │   ├── CustomIconRuntime.php
+│   │   ├── Extension
+│   │   │   └── CustomIconExtension.php
+│   │   └── RolesMatrixExtension.php
+│   ├── Utility
+│   │   ├── CanonicalFieldsUpdater.php
+│   │   └── UserContextTrait.php
+│   └── Validator
+│       ├── NotReservedRole.php
+│       └── NotReservedRoleValidator.php
+├── Kernel.php
+└── UI
+    ├── Console
+    │   ├── CreateAdminUserCommand.php
+    │   ├── GenerateEncryptionKeyCommand.php
+    │   ├── PromoteAdminUserCommand.php
+    │   ├── PromoteUserToSuperAdminCommandConsole.php
+    │   └── ToggleAdminUserAccountCommand.php
+    └── Http
+        ├── ArgumentResolver
+        │   ├── IdEncryptionRequestArgumentValueResolver.php
+        │   └── UserTypeArgumentValueResolver.php
+        ├── Controller
+        │   ├── Admin
+        │   │   ├── DomainActionMinisterCRUDController.php
+        │   │   ├── GroupActionCRUDController.php
+        │   │   ├── Log
+        │   │   │   ├── ActivityLogCRUDController.php
+        │   │   │   └── LoggerLoginCRUDController.php
+        │   │   ├── Login
+        │   │   │   ├── AdminLoginController.php
+        │   │   │   └── MemberUserLoginController.php
+        │   │   ├── Logout
+        │   │   │   └── UserLogoutController.php
+        │   │   ├── PermissionRoleAdminCRUDController.php
+        │   │   ├── User
+        │   │   │   ├── AdminUserCRUDController.php
+        │   │   │   └── MemberUserCRUDController.php
+        │   │   ├── UserPermissionRoleAdminCRUDController.php
+        │   │   └── WlindablaAdminCRUDController.php
+        │   ├── HomeController.php
+        │   └── Verification
+        │       └── EmailVerificationController.php
+        ├── EventSubscriber
+        │   ├── AccessDeniedListener.php
+        │   ├── ActivityLogRequestSubscriber.php
+        │   ├── BrowserValidationListener.php
+        │   ├── LoginSubscriber.php
+        │   └── LogoutSubscriber.php
+        └── Form
+            ├── RolesMatrixType.php
+            └── Type
+                └── ModelAutocompleteType.php

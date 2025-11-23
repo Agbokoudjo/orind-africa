@@ -20,10 +20,15 @@ use App\Domain\User\Model\BaseUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
+use libphonenumber\PhoneNumber;
 
 interface CustomUserInterface extends BaseUserInterface,
     UserInterface,
     LegacyPasswordAuthenticatedUserInterface,
     PasswordAuthenticatedUserInterface{
 
+    public function getPhone(): ?PhoneNumber ;
+
+   
+    public function setPhone(?PhoneNumber $phone): void;
 }

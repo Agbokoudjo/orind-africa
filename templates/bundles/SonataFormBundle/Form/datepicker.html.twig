@@ -1,0 +1,48 @@
+{#
+ This file is part of the Sonata package.
+ Originally developed by Thomas Rabaix <thomas.rabaix@sonata-project.org>
+ Modified by AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
+Phone: +229 0167 25 18 86
+ Company: INTERNATIONALES WEB SERVICES
+
+ See LICENSE file for full MIT license text.
+#}
+
+{% block sonata_type_datetime_picker_widget_html %}
+    <div
+        id="{{ id ~ '_controller' }}"
+        class="input-group date"
+        data-controller="datepicker"
+        data-datepicker-options-value="{{ datepicker_options|json_encode|escape('html_attr') }}"
+        {% if linked_to|default(false) %}data-datepicker-datepicker-outlet="#{{ linked_to ~ '_controller' }}"{% endif %}
+        data-td-target-input="nearest"
+        {% if datepicker_use_button %}data-td-target-toggle="nearest"{% endif %}
+    >
+        {% set attr = attr|merge({
+            'data-td-target': '#' ~ id ~ '_controller',
+            'class': (attr.class|default('') ~ ' form-control')|trim,
+        }) %}
+ 
+        {{ block('datetime_widget') }}
+
+        {% if datepicker_use_button %}
+            <span
+                class="input-group-text"
+                data-td-target="#{{ id ~ '_controller' }}"
+                data-td-toggle="datetimepicker"
+            >
+                <i class="fas {% if datepicker_options.display.viewMode is defined and datepicker_options.display.viewMode == 'clock' %}fa-clock{% else %}fa-calendar{% endif %}"></i>
+            </span>
+        {% endif %}
+    </div>
+{% endblock sonata_type_datetime_picker_widget_html %}
+
+{% block sonata_type_datetime_picker_widget %}
+    {% if wrap_fields_with_addons %}
+        <div class="input-group">
+            {{ block('sonata_type_datetime_picker_widget_html') }}
+        </div>
+    {% else %}
+        {{ block('sonata_type_datetime_picker_widget_html') }}
+    {% endif %}
+{% endblock sonata_type_datetime_picker_widget %}

@@ -26,3 +26,17 @@ forms:
     label_profile: Profile de la mission 
     label_profile_placeholder: |
         Ex: DEVELOPPEUR FULL-STACK SYMFONY & REACTJS
+    uploader_placeholder_avatar: |
+        Faites glisser votre fichier d'image ou cliquez pour parcourir.
+        Format photo d'identité :
+        - Hauteur maximale : 800px
+        - Largeur maximale : 800px
+        - Hauteur minimale : 50px
+        - Largeur minimale : 50px
+
+    identity_document_placeholder: |
+        Faites glisser le document résumant votre pièce d'identité nationale ou cliquez pour parcourir.
+        Les deux faces doivent être incluses dans le même document.
+        - Format : PDF
+        - Lisibilité : Bonne
+        - Taille maximale : 8 MiB

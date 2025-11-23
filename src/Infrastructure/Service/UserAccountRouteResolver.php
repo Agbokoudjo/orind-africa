@@ -54,11 +54,15 @@ final class UserAccountRouteResolver
 
     public static function resolveLoginRouteNameByUser(BaseUserInterface $user): string
     {
-        return match (true) {
-            $user->hasRole('ROLE_ADMIN')  => 'app_admin_user_login',
-            $user->hasRole('ROLE_MEMBER') => 'app_member_user_login',
-            default                       => 'app_user_login',
-        };
+        if($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_MINISTER')){
+            return self::LOGIN_ROUTES['admin'] ;
+        }
+
+        if($user->hasRole('ROLE_MEMBER')){
+            return self::LOGIN_ROUTES['member'] ;
+        }
+        
+        return self::LOGIN_ROUTES['default'];
     }
 
     public static function resolveLoginRouteNameByType(UserType $userType): string

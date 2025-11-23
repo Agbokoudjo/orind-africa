@@ -16,13 +16,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Voter;
 
-use App\Domain\User\Model\BaseUserInterface;
+use App\Domain\User\Model\AdminUserInterface;
 use App\Domain\User\Model\MemberUserInterface;
 use App\Domain\Security\ObjectPermissionInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use App\Infrastructure\Doctrine\Entity\User\LoggerLoginUserEntity;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Application\Service\Authorization\AuthorizationCheckerForUserInterface;
+use App\Infrastructure\Doctrine\Entity\Log\ActivityLogEntity;
 
 /**
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
@@ -46,17 +46,24 @@ final class ActivityLogVoter extends Voter implements ObjectPermissionInterface
     protected function supports(string $attribute, mixed $subject): bool
     {
         return in_array($attribute, self::SUPPORT)
-            && $subject instanceof LoggerLoginUserEntity;
+            && $subject instanceof ActivityLogEntity;
+    }
+
+    public function supportsType(string $subjectType): bool
+    {
+        return is_a($subjectType, ActivityLogEntity::class, true);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
 
         $_user = $token->getUser();
-
-        if (!$_user instanceof BaseUserInterface || !$subject instanceof MemberUserInterface) {
-
+        if (!$_user instanceof AdminUserInterface && !$_user instanceof MemberUserInterface) {
             return false;
+        }
+
+        if ($_user->isSuperAdmin() || $_user->isFounder()) {
+            return true;
         }
 
         return $this->authorizationCheckerForUser->isGrantedForUser($_user, $attribute);

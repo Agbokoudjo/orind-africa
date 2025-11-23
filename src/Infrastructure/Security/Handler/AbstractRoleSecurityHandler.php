@@ -15,6 +15,7 @@ namespace App\Infrastructure\Security\Handler;
 
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Sonata\AdminBundle\Security\Handler\SecurityHandlerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
@@ -22,12 +23,18 @@ use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundE
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
  * @package <https://github.com/Agbokoudjo/>
  */
-abstract class AbstractRoleSecurityHandler 
+abstract class AbstractRoleSecurityHandler implements SecurityHandlerInterface
 {
 
     public function __construct(private AuthorizationCheckerInterface $authorizationChecker) {}
 
-    abstract public function isGranted(AdminInterface $admin, string $attribute, ?object $object = null): bool;
+    /**
+     * @param AdminInterface $admin
+     * @param string $attribute
+     * @param object|null $object
+     * @return boolean
+     */
+    abstract public function isGranted(AdminInterface $admin, $attribute, ?object $object = null): bool;
 
     public function getBaseRole(AdminInterface $admin): string
     {

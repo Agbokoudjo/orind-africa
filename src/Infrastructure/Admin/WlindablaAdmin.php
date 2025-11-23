@@ -103,6 +103,11 @@ abstract class WlindablaAdmin extends AbstractAdmin
      */
     public function getLabelShow(): string
     {
+        if ($this->label_show_id) {
+            $this->labelShow= $this->getTranslator()
+                ->trans($this->label_show_id, [], 'label_show', $this->getRequest()->getLocale());
+        }
+
         return $this->labelShow;
     }
 
@@ -138,15 +143,11 @@ abstract class WlindablaAdmin extends AbstractAdmin
      */
     final public function getLabelList(): string
     {
-        // 1. On vérifie si un identifiant de traduction (label_list_id) a été fourni
         if ($this->label_list_id) {
-            // 2. Si oui, on utilise le service de traduction (Translator) pour traduire
-            //    cet identifiant.
             $this->labelList = $this->getTranslator()
                 ->trans($this->label_list_id, [], 'label_list', $this->getRequest()->getLocale());
         }
-        // 3. On retourne le label qui a été traduit ou le label par défaut si aucun
-        //    identifiant de traduction n'a été fourni.
+
         return $this->labelList;
     }
 
@@ -182,4 +183,12 @@ abstract class WlindablaAdmin extends AbstractAdmin
 
     }
 
+    public function toString(object $object): string
+    {
+        if (method_exists($object, '__toString') && null !== $object->__toString()) {
+            return $object->__toString();
+        }
+
+        return $this->getLabelShow();
+    }
 }

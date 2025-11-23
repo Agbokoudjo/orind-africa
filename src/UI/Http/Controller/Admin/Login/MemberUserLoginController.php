@@ -29,7 +29,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
  * @package <https://github.com/Agbokoudjo/>
  */
-#[Route('/member_user/form/login', name: 'app_member_user_login', methods: ['GET', 'POST'])]
+#[Route('/admin/member/form/login', name: 'app_member_user_login', methods: ['GET', 'POST'])]
 final class MemberUserLoginController extends AbstractController
 {
 

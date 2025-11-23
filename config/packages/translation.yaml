@@ -6,3 +6,9 @@ framework:
             - fr
             - en
         providers:
+        # pseudo_localization:
+        #     accents: true
+        #     brackets: true
+        #     expansion_factor: 1.4
+        #     parse_html: true
+        #     localizable_html_attributes: ['title']

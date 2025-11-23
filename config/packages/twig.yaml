@@ -2,6 +2,9 @@ twig:
     file_name_pattern: '*.twig'
     globals:
         NAME_SITE: "ORIND AFRICA"
+        CACHE_IMG_TWIG: 604800
+        CACHE_DOCUMENT_TWIG: 604800
+        TRANSLATION_HASH: d933fef3e25b3b2e42487045235ce13fa73c1df0b1e05d2eeb3c7a21a5f4d34e
     # form_themes:
     #     - bundles/SonataUserBundle/Form/form_admin_fields.html.twig
 

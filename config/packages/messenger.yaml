@@ -10,6 +10,9 @@ framework:
             # 2. Transport pour les TÂCHES LOURDES (Utilise Beanstalkd)
             async_app_transport:
                 dsn: '%env(MESSENGER_TRANSPORT_APP_DSN)%'
+                retry_strategy:
+                    max_retries: 3
+                    multiplier: 2
               
             async:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
@@ -37,6 +40,7 @@ framework:
             Symfony\Component\Mailer\Messenger\SendEmailMessage: email_transport
             Symfony\Component\Notifier\Message\ChatMessage: async
             Symfony\Component\Notifier\Message\SmsMessage: async
+            App\Application\Queue\Message\ServiceMethodMessage: async_app_transport
 
             # Route your messages to the transports
             # 'App\Message\YourMessage': async

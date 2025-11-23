@@ -5,6 +5,17 @@
 /.env.*.local
 /.env
 .env
+/.env.local
+/.env.local.php
+/.env.*.local
+/.env
+/.env.*
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/public/medias/documents/identity
+/public/medias/images/identity
+/var/
+/vendor/
 /config/ssl/dkim_private.key
 /config/ssl/dkim_public.txt
 /config/secrets/prod/prod.decrypt.private.php

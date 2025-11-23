@@ -71,12 +71,11 @@ final class UserProfileEditVoter extends Voter implements UserProfileEditPermiss
             return false ;
         }
 
-        if($_user->isFounder()){
+        if($_user->isFounder() || $_user->isSuperAdmin()){ 
             return true ;
         }
 
         //meme les nouveaux superAdmin nommer n'ont pas droit a certains modification sauf le createur du backoffice
         return $this->authorizationCheckerForUser->isGrantedForUser($_user, 'PERMISSION_EDITOR_USER_PROFILE');
-      
     }
 }

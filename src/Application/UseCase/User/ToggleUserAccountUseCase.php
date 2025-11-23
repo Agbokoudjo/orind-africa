@@ -22,7 +22,7 @@ use App\Application\Bus\EventBusInterface;
 use App\Domain\User\Event\ToggleUserAccountEvent;
 use App\Domain\User\Exception\DomainUserNotFoundException;
 use App\Domain\User\Service\Registry\UserManagerRegistryInterface;
-use App\Domain\User\Service\Security\Generator\PasswordGeneratorInterface;
+use App\Application\Service\GenerateTemporaryPasswordService ;
 
 /**
  * Use case pour l'activation ou la désactivation d'un compte utilisateur.
@@ -41,27 +41,27 @@ use App\Domain\User\Service\Security\Generator\PasswordGeneratorInterface;
  */
 final class ToggleUserAccountUseCase
 {
-    /**
-     * Longueur du mot de passe temporaire généré à l'activation.
-     */
-    private const TEMPORARY_PASSWORD_LENGTH = 20;
-
     public function __construct(
         private readonly UserManagerRegistryInterface $userManagerRegistry,
         private readonly EventBusInterface $eventBus,
-        private readonly PasswordGeneratorInterface $passwordGenerator
+        private readonly GenerateTemporaryPasswordService $generateTemporaryPassword
     ) {}
 
     /**
      * Active ou désactive un compte utilisateur.
      * 
-     * Lors de l'ACTIVATION :
-     * - Génère un nouveau mot de passe temporaire fort
-     * - L'utilisateur recevra ce mot de passe par email
-     * - Il devra le changer à sa première connexion
+     * Logique d'activation :
+     * - Si c'est la PREMIÈRE ACTIVATION (pas de mot de passe) :
+     *   → Génère un mot de passe temporaire fort
+     *   → L'utilisateur le recevra par email
+     *   → Il devra le changer à sa première connexion
      * 
-     * Lors de la DÉSACTIVATION :
-     * - Le compte est simplement désactivé
+     * - Si c'est une RÉACTIVATION (mot de passe existant) :
+     *   → Le mot de passe existant est conservé
+     *   → L'utilisateur peut se connecter directement
+     * 
+     * Logique de désactivation :
+     * - Le compte est désactivé
      * - Le mot de passe existant est conservé
      *
      * @param UserType $userType Le type d'utilisateur (ADMIN, MEMBER, etc.)
@@ -70,9 +70,9 @@ final class ToggleUserAccountUseCase
      * 
      * @return void
      * 
-     * @throws DomainUserNotFoundException Si l'utilisateur n'existe pas
      * @throws InvalidArgumentException Si les paramètres sont invalides
-     * @throws \RuntimeException Si le manager approprié n'est pas trouvé
+     * @throws DomainUserNotFoundException Si l'utilisateur n'existe pas
+     * @throws RuntimeException Si une erreur système se produit
      */
     public function handle(
         UserType $userType,
@@ -92,7 +92,7 @@ final class ToggleUserAccountUseCase
         if ($user === null) {
             throw new DomainUserNotFoundException($usernameOrEmail);
         }
-
+       
         // 4. Vérification si le statut change réellement
         if ($user->isEnabled() === $status->toBool()) {
             // Pas de changement nécessaire
@@ -100,30 +100,39 @@ final class ToggleUserAccountUseCase
         }
 
         // 5. Application du changement de statut
-        $plainPassword = null;
-
-        if ($status === AccountStatus::ACTIVE) {
+        $plainPasswordTemporary = null;
+        /**
+         * Gère la logique spécifique au mot de passe lors de l'activation (l'entité est passée à 'enabled').
+         * * Cette logique assure l'intégrité des données et la sécurité concernant le mot de passe :
+         * * 1. Nouvel Utilisateur (Première Activation) :
+         * - SI l'utilisateur n'a PAS de mot de passe haché (c'est-à-dire que c'est la première activation),
+         * un nouveau mot de passe sécurisé DOIT être généré et enregistré.
+         * * 2. Utilisateur Existant :
+         * - SI l'utilisateur possède DÉJÀ un mot de passe haché, AUCUN nouveau mot de passe n'est généré.
+         * Le mot de passe existant DOIT être conservé pour maintenir l'accès de l'utilisateur.
+         * */
+        if ($status === AccountStatus::ACTIVE && !$user->hasPassword()) {
             // Activation : générer un nouveau mot de passe temporaire
-            $plainPassword = $this->generateTemporaryPassword();
-            $user->setPlainPassword($plainPassword);
+            $plainPasswordTemporary = $this->generateTemporaryPassword->generateTemporaryPassword();
+            $user->setPlainPassword($plainPasswordTemporary);
         }
 
+        // Mettre à jour le statut du compte
         $user->setEnabled($status->toBool());
+        $userManager->updatePassword($user);
+        //  Persistance des changements
+        $userManager->save($user); 
 
-        // 6. Persistance des changements
-        $userManager->save($user);
-
-        // 7. Déclenchement de l'événement de domaine
-        $event = new ToggleUserAccountEvent($user, $plainPassword);
+        //  Déclenchement de l'événement de domaine
+        $event = new ToggleUserAccountEvent($user, $plainPasswordTemporary);
         $this->eventBus->dispatch($event);
     }
 
+    
     /**
      * Valide les données d'entrée.
      *
-     * @param string $usernameOrEmail L'identifiant à valider
-     * 
-     * @throws InvalidArgumentException Si l'identifiant est vide
+     * @throws InvalidArgumentException Si l'identifiant est vide ou invalide
      */
     private function validateInput(string $usernameOrEmail): void
     {
@@ -132,33 +141,10 @@ final class ToggleUserAccountUseCase
                 'L\'identifiant utilisateur (username ou email) ne peut pas être vide.'
             );
         }
-    }
 
-    /**
-     * Génère un mot de passe temporaire fort.
-     * 
-     * Le mot de passe généré contient :
-     * - Lettres majuscules et minuscules
-     * - Chiffres
-     * - Caractères spéciaux (optionnel selon configuration)
-     *
-     * @return string Le mot de passe en clair
-     * 
-     * @throws \RuntimeException Si la génération échoue
-     */
-    private function generateTemporaryPassword(): string
-    {
-        try {
-            return $this->passwordGenerator->generate(
-                self::TEMPORARY_PASSWORD_LENGTH,
-                true,  // Inclure symboles pour plus de sécurité
-                true   // Exclure caractères ambigus (0/O, 1/l/I)
-            );
-        } catch (\Exception $e) {
-            throw new \RuntimeException(
-                'Impossible de générer un mot de passe sécurisé.',
-                0,
-                $e
+        if (strlen($usernameOrEmail) > 255) {
+            throw new \InvalidArgumentException(
+                'L\'identifiant utilisateur ne peut pas dépasser 255 caractères.'
             );
         }
     }

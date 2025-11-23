@@ -42,7 +42,27 @@ services:
 
     App\:
         resource: '../src/'
-        
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Kernel.php'
+
+    user_type_argument_resolver:
+        class: 'App\UI\Http\ArgumentResolver\UserTypeArgumentValueResolver'
+        autowire: true
+        autoconfigure: false
+        public: true    
+        tags:
+          - name: 'controller.argument_value_resolver'
+            priority: 100
+            
+    App\UI\Http\ArgumentResolver\IdEncryptionRequestArgumentValueResolver:
+        autowire: true
+        autoconfigure: false
+        public: true    
+        tags:
+          - name: 'controller.argument_value_resolver'
+            priority: 999
+
     App\Infrastructure\Utility\CanonicalFieldsUpdater: ~
 
     App\Domain\User\Service\CanonicalFieldsUpdaterInterface:
@@ -57,7 +77,10 @@ services:
         arguments:
             $domainName: '%env(DOMAINE_NAME)%'
             $dkimKey: '%dkim_key%'
-            
+            $fromAddresses: '%app.mail.from%'
+    
+    App\Infrastructure\Service\Mailing\SystemMailer:
+        tags: ['app.system.mailer']
     #Security
     security.acl.permission.map:
         class: Sonata\AdminBundle\Security\Acl\Permission\AdminPermissionMap
@@ -92,7 +115,7 @@ services:
         tags: ['app.user_manager']
 
     #ManagerRegistry
-    App\Infrastructure\Registry\UserManagerRegistry:
+    App\Infrastructure\Persistance\Registry\UserManagerRegistry:
         arguments:
             - !tagged_iterator app.user_manager
 
@@ -121,4 +144,49 @@ services:
         arguments:
             $eventDispatcher: '@event_dispatcher'
 
+    # Validateur de requêtes navigateur
+    App\Infrastructure\Security\BrowserValidation\BrowserRequestValidator:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # Event listener pour intercepter les requêtes
+    App\UI\Http\EventSubscriber\BrowserValidationListener:
+        autowire: true
+        autoconfigure: true
+        public: false
+        tags:
+            - name: 'kernel.event_listener'
+              event: 'kernel.request'
+              priority: 1000 
+
+    # App\Infrastructure\Doctrine\EventListener\UserEventSubscriber:
+    #     autowire: true
+    #     autoconfigure: true
+    #     public: false
+    #     tags:
+    #         - name: 'doctrine.event_subscriber'
+
+    # ============================================================================
+    # Service d'encryption des IDs
+    # ============================================================================
+    
+    App\Infrastructure\Security\Encryption\IdEncryptionService:
+        autowire: true
+        autoconfigure: false
+        public: false
+        arguments:
+            $encryptionKey: '%env(APP_ID_ENCRYPTION_KEY)%'
+
+    Sonata\AdminBundle\Route\DefaultRouteGenerator:
+        autowire: true
+        autoconfigure: false
+        public: false
+
+    App\Infrastructure\Route\SonataRouteGenerator:
+        autowire: true
+        autoconfigure: false
+        public: false
+        arguments:
+            - '@sonata.admin.route.default_generator'
     

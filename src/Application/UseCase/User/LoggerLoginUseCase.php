@@ -18,6 +18,8 @@ namespace App\Application\UseCase\User;
 
 use App\Domain\User\Model\LoggerLoginUser;
 use App\Domain\User\Model\BaseUserInterface;
+use App\Domain\User\Message\RecordLoginMessage;
+use App\Domain\User\Exception\UserManagerNotFoundException;
 use App\Domain\User\Manager\LoggerLoginUserManagerInterface;
 use App\Domain\User\Service\Registry\UserManagerRegistryInterface;
 
@@ -31,14 +33,26 @@ final class LoggerLoginUseCase
         private  UserManagerRegistryInterface $userManagerRegistry,
         private LoggerLoginUserManagerInterface $loggerLoginManager) {}
         
-    public function recordLogin(BaseUserInterface $user,string $lastLoginIp):void{
+    public function recordLogin(RecordLoginMessage $loginMessage):void{
 
-        $userManager = $this->userManagerRegistry->getByUser($user);
-        $lastLogin= new \DateTime('now', new \DateTimeZone('UTC'));
-        $user->setLastLogin($lastLogin);
-        $userManager->save($user);
+        try {
+            $userManager = $this->userManagerRegistry->getByUserType($loginMessage->userType);
 
-        $loggerLogin = LoggerLoginUser::fromUser($user, $user->getRolePrincipal(),$lastLoginIp);
+            /**
+             * @var BaseUserInterface
+             */
+            $userLogin=$userManager->find($loginMessage->userId);
+
+            if (!$userLogin instanceof BaseUserInterface) { return; }
+
+            $lastLogin = new \DateTime('now', new \DateTimeZone('UTC'));
+            $userLogin->setLastLogin($lastLogin);
+            $userManager->save($userLogin);
+        } catch (UserManagerNotFoundException $exception) {
+            throw $exception;
+        }
+
+        $loggerLogin = LoggerLoginUser::fromUser($userLogin, $userLogin->getRolePrincipal(),$loginMessage->lastLoginIp);
         $this->loggerLoginManager->doSave($loggerLogin);
     }
 }

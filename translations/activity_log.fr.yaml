@@ -1,0 +1,24 @@
+# Actions de Navigation et Systèmes
+PAGE_VIEW: "Consultation de Page"
+AJAX_REQUEST: "Requête Asynchrone (API)"
+ROUTE_NOT_FOUND: "Page Non Trouvée (404)"
+LOGIN_SUCCESS: "Connexion Réussie"
+LOGIN_FAILURE: "Échec de Connexion"
+LOGOUT: "Déconnexion Utilisateur"
+LOGIN: "Tentative de Connexion" 
+DOWNLOAD: "Téléchargement de Fichier"
+UPLOAD: "Téléversement de Fichier"
+EXPORT: "Exportation de Données"
+IMPORT: "Importation de Données"
+OTHER: "Autre Action Système"
+
+# Actions CRUD (Gestion des Entités)
+ENTITY_CREATE: "Création d'Entité"
+ENTITY_UPDATE: "Mise à Jour d'Entité"
+ENTITY_DELETE: "Suppression d'Entité"
+ENTITY_READ: "Lecture Détaillée d'Entité"
+
+# Actions Business Spécifiques
+PASSWORD_RESET: "Réinitialisation de Mot de Passe"
+ORDER_PLACED: "Commande Client Passée"
+PAYMENT_FAILED: "Échec de Paiement"

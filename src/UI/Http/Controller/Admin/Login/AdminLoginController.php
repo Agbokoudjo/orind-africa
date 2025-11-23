@@ -29,14 +29,13 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  * @author AGBOKOUDJO Franck <internationaleswebservices@gmail.com>
  * @package <https://github.com/Agbokoudjo/>
  */
-#[Route('/admin_user/form/login', name: 'app_admin_user_login', methods: ['GET', 'POST'])]
+#[Route('/admin/form/login', name: 'app_admin_user_login', methods: ['GET', 'POST'])]
 final class AdminLoginController extends AbstractController{
 
     public function __construct(
         private Pool $adminPool,
         #[Autowire(service: "sonata.admin.global_template_registry")]
         private TemplateRegistryInterface $templateRegistry,
-        private TokenStorageInterface $tokenStorage,
         private ?CsrfTokenManagerInterface $csrfTokenManager = null,
     ) {}
     public function __invoke(AuthenticationUtils $authenticationUtils):Response{

@@ -32,9 +32,8 @@
 {% endblock %}
 {% block javascripts_inline %}{% endblock %}
 {% block javascript_inline %}{% endblock %}
-{% block javascripts %}
+{% block javascripts %} 
       {{ parent() }}
-     {% block importmap %}{{ importmap('login') }}{% endblock %}
 {% endblock %}
 
 {% block sonata_wrapper %}

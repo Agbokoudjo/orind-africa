@@ -14,7 +14,7 @@
               action="{% block sonata_form_action_url %}{{ admin.generateUrl(url, {(admin.idParameter): objectId, 'uniqid': admin.uniqid, 'subclass': app.request.get('subclass')}) }}{% endblock %}"
               {% if form.vars.multipart %} enctype="multipart/form-data"{% endif %}
               method="POST"
-              class="form-validate"
+              class="form-validate form-submit crud-entity"
               name="{{admin.uniqId}}"
               {{
                 stimulus_controller('sonata-confirm-exit')|

@@ -49,6 +49,14 @@ interface BaseUserInterface
 
     public function setPassword(?string $password): void;
 
+    /**
+     * Checks if the user has a hashed password defined in the database.
+     * This is crucial for determining local login capability vs. external authentication.
+     *
+     * @return bool Returns true if the 'password' property is not null and not an empty string.
+     */
+    public function hasPassword():bool ;
+
     public function setEnabled(bool $enabled): void;
 
     public function getConfirmationToken(): ?string;
@@ -129,4 +137,6 @@ interface BaseUserInterface
     public function getEmailVerifiedAt(): ?\DateTimeImmutable ;
 
     public function setEmailVerifiedAt(?\DateTimeImmutable $emailVerifiedAt):void ;
+
+    public function isEmailVerified(): bool ;
 }

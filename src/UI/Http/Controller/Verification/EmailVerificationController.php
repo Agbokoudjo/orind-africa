@@ -30,7 +30,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 #[Route(
     '/verify-email/{token}/{slug}/{user_type}',
-    name: 'app_verify_email',
+    name: 'app.verify.email',
     requirements: [
         // Le type utilisateur est encodé en Base64 (lettres, chiffres, +, / et =)
         'user_type' => '[a-zA-Z0-9+/]+={0,2}',
@@ -49,14 +49,13 @@ final class EmailVerificationController extends AbstractController
     public function __invoke(
         string $token,
         string $slug,
-        UserType $userTypeEnum
+        UserType $user_type,
     ):Response{
         $page_redirection_route_name="app.home";
         try {
-            $page_redirection_route_name = UserAccountRouteResolver::resolveLoginRouteNameByType($userTypeEnum);
+            $page_redirection_route_name = UserAccountRouteResolver::resolveLoginRouteNameByType($user_type);
 
-
-            $this->verificationService->verifyEmail($token, $slug, $userTypeEnum);
+            $this->verificationService->verifyEmail($token, $slug, $user_type);
             $this->addFlash('success', '✅ Votre email a été vérifié avec succès ! Vous pouvez maintenant vous connecter.');
 
             return $this->render('/email/security/checkEmail.html.twig', [
@@ -64,7 +63,22 @@ final class EmailVerificationController extends AbstractController
             ]);
             
         } catch (InvalidTokenException $e) {
-            return $this->handleInvalidToken($e, $slug, $userTypeEnum, $page_redirection_route_name);
+
+            if ($e->isExpired()) {
+                $this->addFlash(
+                    'warning',
+                    '⏰ Le lien de vérification a expiré. Un nouveau lien vous a été envoyé.'
+                );
+
+                // Renvoyer un email 
+                $this->verificationService->resendVerificationEmail($slug, $user_type);
+
+                return $this->render('/email/security/checkEmail.html.twig', [
+                        'page_login_url' => $page_redirection_route_name
+                    ]);
+                }
+
+            return $this->handleInvalidToken($e,$page_redirection_route_name);
 
         } catch (\Exception $e) {
             return $this->handleUnexpectedError($e);
@@ -84,27 +98,14 @@ final class EmailVerificationController extends AbstractController
      */
     private function handleInvalidToken(
         InvalidTokenException $e,
-        string $slug,
-        UserType $userType,
         string  $page_redirection_route_name
     ): Response{
-
-        if ($e->isExpired()) {
-
+      
+         if ($e->isAlreadyUsed()) {
             $this->addFlash(
                 'warning',
-                '⏰ Le lien de vérification a expiré. Un nouveau lien vous a été envoyé.'
-            );
-
-            // Renvoyer un email 
-            $this->verificationService->resendVerificationEmail($slug, $userType);
-
-        } elseif ($e->isAlreadyUsed()) {
-            $this->addFlash(
-                'info',
                 'Votre email est déjà vérifié ! Vous pouvez vous connecter directement.'
             );
-
             return $this->render('/email/security/checkEmail.html.twig', [
                 'page_login_url' => $page_redirection_route_name
             ]);
@@ -112,12 +113,12 @@ final class EmailVerificationController extends AbstractController
         } elseif ($e->isUserNotFound()) {
 
             $this->addFlash(
-                'error',
+                'danger',
                 '❌' . $e->getMessage()
             );
         } else {
             $this->addFlash(
-                'error',
+                'danger',
                 '❌ Le lien de vérification est invalide. Veuillez réessayer.'
             );
         }

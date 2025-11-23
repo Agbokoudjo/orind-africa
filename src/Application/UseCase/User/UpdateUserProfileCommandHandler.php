@@ -31,33 +31,19 @@ final readonly class UpdateUserProfileCommandHandler
         private CanonicalFieldsUpdaterInterface $canonicalFields
     ) {}
 
-    public function handler(UpdateUserProfileCommand $command): void
+    public function handle(UpdateUserProfileCommand $command): void
     {
-        // 1. Récupérer le Manager approprié
         $manager = $this->managerRegistry->getByUserType($command->getUserType());
 
-        // 2. Récupérer l'Entité (méthode à ajouter au Manager)
         $user = $manager->find($command->getUserId());
 
-        if (null === $user) {
-          
-            return;
-        }
+        if (null === $user) { return;}
 
-        // 3. Exécution de la logique déléguée :
-
-        // A. Mise à jour des champs canoniques (et l'e-mail du User)
         $this->canonicalFields->updateCanonicalFields($user);
 
-        // B. Mise à jour du mot de passe (nécessaire si c'est une création asynchrone)
-        $manager->updatePassword($user);
-
-        // C. Génération du Slug
-        
         $slug_hash = md5(\sprintf('%s_%d', $user->getUsernameCanonical(), time()));
-        $user->setSlug(sha1($slug_hash));
+        $user->setSlug(sha1($slug_hash)); 
 
-        // 4. Sauvegarde des changements (doit être gérée par le Manager)
         $manager->save($user);
     }
 }

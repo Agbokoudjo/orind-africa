@@ -80,7 +80,8 @@ security:
 
         #GROUP ACTION
             - ROLE_SONATA_ADMIN_GROUP_ACTION_LIST
-
+            - ROLE_AUDITOR_ACTIVITY_LOG
+            - ROLE_AUDITOR_LOGIN
         ROLE_GROUP_MANAGER:
 
         #USER_MEMBER
@@ -135,11 +136,11 @@ security:
                 path: /admin
             logout:
                path: sonata_user_admin_security_logout
-               target: sonata_user_admin_security_login
+               target: app_admin_user_login
                
            
         main:
-            lazy: true
+            lazy: true 
             provider: users_in_memory
 
             # activate different ways to authenticate
@@ -151,10 +152,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/admin_user/form/login$, role: PUBLIC_ACCESS }
-        - { path: ^/admin/*, roles: ROLE_ADMIN }
+        - { path: ^/admin/form/login$, role: PUBLIC_ACCESS }
         - { path: ^/profile, roles: ROLE_SUPER_ADMIN }
-        - { path: ^/user/logout$, role: PUBLIC_ACCESS }
+        - { path: ^/admin/logout$, role: PUBLIC_ACCESS }
+        - {path: ^/verify-email/* ,role: PUBLIC_ACCESS }
+        - { path: ^/admin/*, roles: ROLE_ADMIN }
 
 when@test:
     security:

@@ -43,7 +43,7 @@ final class ActivityLogCommandHandler
                 ->setAction($activityCommand->action)
                 ->setMethod($activityCommand->method)
                 ->setRoute($activityCommand->route)
-                ->setCreatedAt(new \DateTimeImmutable('now'),new \DateTimeZone('UTC'))
+                ->setCreatedAt(new \DateTimeImmutable('now',new \DateTimeZone('UTC')))
                 ;
             $this->activityLogManager->save($activityLog,true);
 

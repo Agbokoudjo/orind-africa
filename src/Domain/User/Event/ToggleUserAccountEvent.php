@@ -26,7 +26,7 @@ final readonly class ToggleUserAccountEvent
 {
     public function __construct(
         private BaseUserInterface $_user,
-        private ?string $plainPasswordUser=null
+        private ?string $temporaryPassword = null,
     ) {}
 
     public function getUser(): BaseUserInterface
@@ -34,8 +34,11 @@ final readonly class ToggleUserAccountEvent
         return $this->_user;
     }
 
-    public function getPlainPassword():?string{
-
-        return $this->plainPasswordUser ;
+    /**
+     * Get the value of temporaryPassword
+     */
+    public function getTemporaryPassword(): ?string
+    {
+        return $this->temporaryPassword;
     }
 }

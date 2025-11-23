@@ -20,9 +20,8 @@ use App\Application\Queue\AsyncMethodDispatcherInterface;
 use App\Application\UseCase\CommandHandler\ActivityLogCommandHandler;
 use App\Domain\Log\Command\ActivityLogCommand;
 use App\Domain\Log\Enum\ActivityAction;
-use App\Domain\User\Exception\UnresolvableUserTypeException;
 use App\Domain\User\Model\BaseUserInterface;
-use App\Domain\User\Service\Resolver\UserTypeResolver;
+use App\Infrastructure\Utility\UserContextTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -47,6 +46,7 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
  */
 final class LogoutSubscriber implements EventSubscriberInterface
 {
+    use UserContextTrait ;
     /**
      * Durée minimale de session considérée comme normale (en secondes).
      * Une session plus courte peut indiquer un problème technique ou de sécurité.
@@ -65,7 +65,7 @@ final class LogoutSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            LogoutEvent::class => 'onLogout',
+            LogoutEvent::class => ['onLogout',-100],
         ];
     }
 
@@ -155,51 +155,6 @@ final class LogoutSubscriber implements EventSubscriberInterface
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-        }
-    }
-
-    /**
-     * Extrait le contexte utilisateur pour le logging.
-     *
-     * @param BaseUserInterface|null $user L'utilisateur (null si session expirée)
-     * 
-     * @return array<string, mixed> Le contexte utilisateur
-     */
-    private function extractUserContext(?BaseUserInterface $user): array
-    {
-        if ($user === null) {
-            return [
-                'id' => null,
-                'email' => 'anonymous',
-                'username' => 'anonymous',
-                'role' => 'ROLE_ANONYMOUS',
-                'type' => 'guest',
-            ];
-        }
-
-        try {
-            $userType = UserTypeResolver::resolveFromUser($user);
-
-            return [
-                'id' => $user->getId(),
-                'email' => method_exists($user, 'getEmail') ? $user->getEmail() : 'N/A',
-                'username' => $user->getUsername(),
-                'role' => $user->getRolePrincipal(),
-                'type' => $userType->value,
-            ];
-        } catch (UnresolvableUserTypeException $e) {
-            $this->logger?->warning('Impossible de résoudre le type utilisateur lors de la déconnexion', [
-                'user_class' => $user::class,
-                'error' => $e->getMessage(),
-            ]);
-
-            return [
-                'id' => $user->getId(),
-                'email' => method_exists($user, 'getEmail') ? $user->getEmail() : 'N/A',
-                'username' => $user->getUsername(),
-                'role' => $user->getRolePrincipal(),
-                'type' => 'unknown',
-            ];
         }
     }
 

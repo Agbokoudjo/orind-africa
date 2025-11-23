@@ -1,0 +1,72 @@
+{% extends 'knp_menu.html.twig' %}
+
+{% block root %}
+    {%- set listAttributes = item.childrenAttributes|merge({ class: 'nav sidebar-menu flex-column', 'data-lte-toggle': 'treeview', role: 'menu', 'data-accordion': 'false',
+        id:'navigation', 'aria-label':'Main navigation' }) -%}
+    {%- set request        = item.extra('request') ?: app.request -%}
+    {{ block('list') -}}
+{% endblock %} 
+
+{% block item %}
+    {%- if item.displayed -%}
+        {#- check role of the group #}
+        {%- set display = item.extra('roles') is empty or is_granted(sonata_config.getOption('role_super_admin')) or item.extra('roles')|filter(role => is_granted(role))|length > 0 -%}
+    {%- endif -%}
+
+    {%- if item.displayed and display|default -%}
+        {%- set options = options|merge({branch_class: 'nav-item', currentClass: "active", ancestorClass: "active"}) -%}
+        {%- do item.setChildrenAttribute('class', (item.childrenAttribute('class')~' active')|trim) -%}
+        {%- do item.setChildrenAttribute('class', (item.childrenAttribute('class')~'   nav nav-treeview treeview-menu')|trim) -%}
+        {{ parent() }}
+    {%- endif -%}
+{% endblock %}
+
+{% block linkElement %}
+    {%- set translation_domain = item.extra('translation_domain','messages') -%}
+    {%- if item.extra('on_top') is defined and not item.extra('on_top') -%}
+        {%- set icon = item.extra('icon')|default(item.level > 1 ? 'nav-icon bi bi-circle' : '')|parse_icon -%}
+    {%- else -%}
+        {%- set icon = item.extra('icon')|parse_icon -%}
+    {%- endif -%}
+    {%- set is_link = true -%}
+    {# ajoute les class "nav-link d-flex flex-row" au balise a du parent #}
+    {{ parent() }}
+{% endblock %}
+
+{% block spanElement %}
+    <a href="#" class="nav-link d-flex flex-row spanElement-a">
+        {%- set translation_domain = item.extra('translation_domain','messages') -%}
+        {%- set icon = item.extra('icon')|default('')|parse_icon -%}
+        {{ icon|raw }}
+         <p class="label-nav-item-group spanElement-p">
+             {{ parent() }}
+             {%- if item.extra('keep_open') is not defined or not item.extra('keep_open') -%}
+                <span class="pull-right-container label-nav-item-group-icon">
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                </span>
+        {%- endif -%}
+         </p>
+    </a>
+{% endblock %}
+
+{% block label %}
+    {%- if is_link|default(false) -%}
+        {{ icon|default('')|parse_icon|raw }}
+    {%- endif -%}
+    {%- set item_label = item.label -%}
+
+    {%- if item.uri is not empty and (not matcher.isCurrent(item) or options.currentAsLink) %}
+        <p class="linkElement-p">
+    {%- endif %}
+        {%- if options.allow_safe_labels and item.extra('safe_label', false) -%}
+            {{ item_label|raw }}
+        {%- else -%}
+
+        {%- set translation_domain = item.extra('translation_domain','messages') -%}
+             {{ item_label|trans(item.extra('label_translation_parameters', {}), translation_domain) }}
+        {%- endif -%}
+
+        {%- if item.uri is not empty and (not matcher.isCurrent(item) or options.currentAsLink) %}
+            </p>
+        {%- endif %}
+{% endblock %}

@@ -7,10 +7,9 @@ namespace App\Infrastructure\Security\Handler;
 use Symfony\Bundle\SecurityBundle\Security;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use App\Infrastructure\Security\Voter\UserPermissionRoleVoter;
-use Sonata\AdminBundle\Security\Handler\SecurityHandlerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-final class UserPermissionRoleSecurityHandler extends AbstractRoleSecurityHandler implements SecurityHandlerInterface
+final class UserPermissionRoleSecurityHandler extends AbstractRoleSecurityHandler 
 {
     public function __construct(
         private readonly Security $security,
@@ -19,7 +18,7 @@ final class UserPermissionRoleSecurityHandler extends AbstractRoleSecurityHandle
         parent::__construct($authorizationChecker);
     }
 
-    public function isGranted(AdminInterface $admin, string $attribute, ?object $object = null): bool
+    public function isGranted(AdminInterface $admin, $attribute, ?object $object = null): bool
     {
         if ($object instanceof AdminInterface) {
             return $this->isGrantedRoleHierarchy($admin, $attribute, $object);

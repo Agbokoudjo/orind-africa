@@ -3,11 +3,12 @@ import {
     addHashToIds,
     FieldValidationFailed,
     addErrorMessageFieldDom,
-     clearErrorInput
+    clearErrorInput,
+   formatterEvent 
 } from "@wlindabla/form_validator"
 
 export function formValidate() {
-    const form_exist = document.querySelector('form.form-validator');
+    const form_exist = document.querySelector('form.form-validate');
     if (form_exist ===null) {
         return;
     }
@@ -37,9 +38,31 @@ export function formValidate() {
 
     __form.on('input', `${idsInput}`, (event) => {
         const target = event.target;
-        if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+        if ((target instanceof HTMLInputElement ||
+            target instanceof HTMLTextAreaElement)
+             && target.type !== "file") {
+
+            clearErrorInput(jQuery(target));
+        }
+    });
+    __form.on('change', `${idsChange}`, async (event) => {
+         const target = event.target;
+        if (target instanceof HTMLInputElement && target.type === "file") {
+
+            await form_validate.validateChildrenForm(target);
+        }
+    })
+    __form.on('dragenter',`${idsChange}`, (event) => {
+        const target = event.target;
+        if (target instanceof HTMLInputElement && target.type === "file") {
 
             clearErrorInput(jQuery(target));
         }
     });
 }
+
+export function formformatterEventHandle() {
+    formatterEvent.lastnameToUpperCase(document);
+    formatterEvent.capitalizeUsername(document);
+    formatterEvent.usernameFormatDom(document);
+ }

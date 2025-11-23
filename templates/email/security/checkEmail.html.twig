@@ -44,7 +44,7 @@
         {% endblock %}
 
         <div class="message-box-body">
-            {% include '@SonataTwig/FlashMessage/render.html.twig' %}
+            {% include 'bundles/SonataTwigBundle/FlashMessage/render.html.twig' %}
 
             {% if page_login_url is defined  %}
                  <a href="{{ path(page_login_url) }}">

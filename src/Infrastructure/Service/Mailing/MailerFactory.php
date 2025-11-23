@@ -52,7 +52,7 @@ final class MailerFactory implements MailerFactoryInterface,PriorityInterface
     /**
      * {@inheritdoc}
      */
-    public function sendAsync(Email $email): void // 🚨 NOUVEAU PARAMÈTRE 🚨
+    public function sendAsync(Email $email): void 
     {
         $this->sendNow($email);
     }

@@ -25,10 +25,8 @@ use App\Domain\User\Manager\UserManagerInterface;
 use App\Domain\User\Exception\InvalidTokenException;
 use App\Domain\User\Exception\EmailAlreadyVerifiedException;
 use App\Domain\User\Service\Security\Hash\TokenHasherInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Domain\User\Service\Security\EmailVerificationInterface;
 use App\Domain\User\Service\Registry\UserManagerRegistryInterface;
-use App\Domain\User\Service\Security\Generator\TokenGeneratorInterface;
 
 /**
  * Service de vérification des emails utilisateurs.
@@ -45,8 +43,6 @@ final class EmailVerificationService implements EmailVerificationInterface
     public function __construct(
         private readonly UserManagerRegistryInterface $userManagerRegistry,
         private readonly TokenHasherInterface $tokenHasher,
-        private readonly TokenGeneratorInterface $tokenGenerator,
-        private EventDispatcherInterface $dispatcher ,
         private SecureTokenService $secureTokenService,
         private readonly ?LoggerInterface $logger = null
     ) {}
@@ -180,8 +176,6 @@ final class EmailVerificationService implements EmailVerificationInterface
         }
 
         // 2. Vérification si l'email est déjà vérifié
-        // NOTE: SecureTokenService gère aussi cette vérification, mais il est mieux 
-        // de la garder ici pour retourner une exception personnalisée de l'Application.
         if ($user->isIsEmailVerified()) {
             $this->logger?->info('Tentative de renvoi pour email déjà vérifié', [
                 'user_id' => $user->getId(),
@@ -190,7 +184,6 @@ final class EmailVerificationService implements EmailVerificationInterface
             throw EmailAlreadyVerifiedException::forUser($user->getEmail());
         }
 
-        // --- 3. DÉLÉGATION AU SERVICE EXPERT ---
         try {
             // Le service s'occupe de tout : cooldown, génération, hachage, persistance et dispatch de l'événement.
             $this->secureTokenService->generateEmailConfirmationToken($user);

@@ -2,10 +2,17 @@ sonata_admin:
     title: 'ORIND AFRICA'
     title_logo: 'images/logo.jpg'
     show_mosaic_button: false
+    persist_filters: true
+    # filter_persister: filter_persister_service_id
     options:
         js_debug: true 
     templates:
         layout: 'bundles/SonataAdminBundle/standard_layout.html.twig'
+    assets:
+        remove_stylesheets:
+            ["bundles/sonataadmin/app.css"]
+        remove_javascripts:
+            ["bundles/sonataadmin/app.js"]
     dashboard:
         blocks:
             - { type: sonata.admin.block.admin_list, position: left }
@@ -32,9 +39,9 @@ sonata_admin:
                 icon: fas fa-shield-halved
                 roles: ['ROLE_AUDITOR_LOGIN','ROLE_AUDITOR_ACTIVITY_LOG']
 
-    default_controller: App\UI\Http\Controller\Admin\WlindablaAdminCRUDController.php
-    # default_admin_services:
-    #     security_handler: App\Infrastructure\Security\Handler\RoleSecurityHandler
+    default_controller: App\UI\Http\Controller\Admin\WlindablaAdminCRUDController
+    default_admin_services:
+        route_generator: App\Infrastructure\Route\SonataRouteGenerator
     security:
         handler: sonata.admin.security.handler.role
 

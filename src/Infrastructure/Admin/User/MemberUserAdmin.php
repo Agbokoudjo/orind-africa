@@ -117,4 +117,8 @@ final class MemberUserAdmin extends AbstractUserAdmin
 
         
     }
+
+    protected function getUserAdminCode():string{ return $this->getCode() ;}
+
+    protected function getController():string{ return MemberUserCRUDController::class ; }
 }

@@ -1,14 +1,52 @@
 import './bootstrap.js';
-
-import Swal from 'sweetalert2'
-import {  addErrorMessageFieldDom, clearErrorInput } from '@wlindabla/form_validator';
+import Swal from 'sweetalert2';
+import {
+    addErrorMessageFieldDom, 
+    clearErrorInput,
+    appTranslation,
+    fetchErrorTranslator
+ } from '@wlindabla/form_validator';
 import { reservedRolesValidator } from './libs/ReservedRolesInputValidator.js';
-import { formValidate } from "./js/form.js";
-window.Swal = Swal;
 
-jQuery(function init() {
+import { 
+    formValidate, 
+   formformatterEventHandle
+} from "./js/form.js";
+
+import {
+    toggleAccountHandle,
+    resendEmailVerification,
+    handlePasswordRegeneration
+} from "./js/action.js";
+import { toggleUserAccountListener } from "./js/Listener.js";
+import { basicLightboxImage,basicLightboxDocument } from "./js/utils.js";
+jQuery(async function init() {
+    Admin.log('alert - JQuery est maintenant défini !');
+    window.Swal = Swal;
+    window.SonataTranslator = appTranslation;
+
+     // Récupère le hash actuel des traductions
+    const currentHash = jQuery('meta[name="sonata-translations-hash"]').attr('content');
+    const cachedHash = localStorage.getItem('sonata_translations_hash');
+    
+    // Si le hash a changé, vide le cache
+    if (currentHash && cachedHash !== currentHash) {
+        Admin.log('Translation keys changed - clearing cache');
+        await appTranslation.clearCache();
+        localStorage.setItem('sonata_translations_hash', currentHash);
+    }
+
+    await appTranslation.preload('sonata-translations');
+    window.fetchErrorTranslator =fetchErrorTranslator 
     formValidate();
+    formformatterEventHandle();
     reservedRoleValidate();
+    toggleAccountHandle(document);
+    resendEmailVerification();
+    handlePasswordRegeneration();
+    toggleUserAccountListener();
+    basicLightboxImage();
+    basicLightboxDocument();
 })
 
 function reservedRoleValidate() {
@@ -16,9 +54,6 @@ function reservedRoleValidate() {
     
     if (inputReservedRoleValidate.length > 0) {
         
-        // ------------------------------------------------------------------
-        // GESTION DE L'ÉVÉNEMENT 'blur' (Validation)
-        // ------------------------------------------------------------------
         inputReservedRoleValidate.on('blur', function (event) {
             const target = jQuery(event.target);
             const inputName = target.attr('name');

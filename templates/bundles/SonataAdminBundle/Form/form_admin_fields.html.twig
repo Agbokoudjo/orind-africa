@@ -679,27 +679,3 @@ file that was distributed with this source code.
 {% block sonata_type_template_widget %}
     {% include template with parameters only %}
 {% endblock sonata_type_template_widget %}
-
-{% block sonata_security_roles_widget %}
-    <div class="editable">
-        <h4>{{ 'field.label_roles_editable'|trans({}, "SonataUserBundle") }}</h4>
-        {{ block('choice_widget') }}
-    </div>
-    {% if read_only_choices|length > 0 %}
-    <div class="readonly">
-        <h4>{{ 'field.label_roles_readonly'|trans({}, "SonataUserBundle") }}</h4>
-        <ul>
-        {% for choice in read_only_choices %}
-            <li>{{ choice }}</li>
-        {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
-{% endblock sonata_security_roles_widget %}
-
-{% block sonata_roles_matrix_widget %}
-    {{ renderMatrix(form)|raw }}
-    <ul class="list-unstyled d-flex  flex-wrap  align-content-between">
-        {{ renderRolesList(form)|raw }}
-    </ul>
-{% endblock sonata_roles_matrix_widget %}

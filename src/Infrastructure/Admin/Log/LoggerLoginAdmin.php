@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Admin\Log;
 
 use App\Domain\User\Enum\UserClass;
+use Sonata\Form\Type\DateRangeType;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Sonata\Form\Type\DateTimeRangeType;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use App\Infrastructure\Admin\WlindablaAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -26,8 +26,8 @@ use Sonata\DoctrineORMAdminBundle\Filter\ChoiceFilter;
 use Sonata\DoctrineORMAdminBundle\Filter\StringFilter;
 use App\Infrastructure\Security\Voter\LoggerLoginVoter;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Sonata\DoctrineORMAdminBundle\Filter\DateRangeFilter;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Sonata\DoctrineORMAdminBundle\Filter\DateTimeRangeFilter;
 use App\UI\Http\Controller\Admin\Log\LoggerLoginCRUDController;
 use App\Infrastructure\Doctrine\Entity\User\LoggerLoginUserEntity;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
@@ -54,7 +54,8 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
         'translation_domain' => 'Admin',
         'show_in_roles_matrix' => true,
         'roles' => ['ROLE_AUDITOR_LOGIN'],
-        'security_handler' => LoggerLoginSecurityHandler::class
+        'security_handler' => LoggerLoginSecurityHandler::class,
+        'pager_type' => 'simple'
     ]
 )]
 final class LoggerLoginAdmin extends WlindablaAdmin{
@@ -68,9 +69,6 @@ final class LoggerLoginAdmin extends WlindablaAdmin{
     {
         $translationDomain = 'logger';
 
-        // ----------------------------------------------------
-        // 1. Filtres d'Identité
-        // ----------------------------------------------------
         $datagrid
             // Filtre par Nom d'Utilisateur
             ->add('username', StringFilter::class, [
@@ -85,7 +83,6 @@ final class LoggerLoginAdmin extends WlindablaAdmin{
                 'label' => 'login.email',
             'field_type' => TextType::class,
                 'translation_domain' => $translationDomain,
-            'show_filter' => true,
             ])
 
             // 2. Filtre de Rôle (UserClass)
@@ -116,9 +113,9 @@ final class LoggerLoginAdmin extends WlindablaAdmin{
 
             // 4. Filtre Temporel (Critique pour l'Audit)
             // Permet de filtrer par une plage de dates (ex: tentatives d'hier)
-            ->add('createdAt', DateTimeRangeFilter::class, [
+            ->add('createdAt', DateRangeFilter::class, [
                 'label' => 'login.createdAt',
-                'field_type'=> DateTimeRangeType::class,
+                'field_type'=> DateRangeType::class,
                 'translation_domain' => $translationDomain,
                 'field_options' => [
                     // Configure le type de champ pour la date/heure
@@ -202,66 +199,52 @@ final class LoggerLoginAdmin extends WlindablaAdmin{
 
     protected function configureShowFields(ShowMapper $show): void
     {
-        // Définir le domaine de traduction une seule fois pour éviter la répétition
         $translationDomain = 'logger';
 
-        // ----------------------------------------------------
-        // I. IDENTIFIANT DE L'AUDIT (Non Modifiable)
-        // ----------------------------------------------------
         $show
             ->with('Audit Info', ['class' => 'col-md-4',
-            'label' => 'login.audit_info',
-            'translation_domain' => $translationDomain])
-            ->add('id', FieldDescriptionInterface::TYPE_INTEGER, [
-                'label' => 'login.id',
-                'translation_domain' => $translationDomain,
-            ])
-            ->add('createdAt', FieldDescriptionInterface::TYPE_DATETIME, [
-                'label' => 'login.createdAt',
-                'translation_domain' => $translationDomain,
-                'format' => 'd/m/Y H:i:s',
-            ])
+                    'label' => 'login.audit_info',
+                    'box_class' => 'box box-solid box-solid-with',
+                    'translation_domain' => $translationDomain])
+                ->add('id', FieldDescriptionInterface::TYPE_INTEGER, [
+                    'label' => 'login.id',
+                    'translation_domain' => $translationDomain,
+                ])
+                ->add('createdAt', FieldDescriptionInterface::TYPE_DATETIME, [
+                    'label' => 'login.createdAt',
+                    'translation_domain' => $translationDomain,
+                    'format' => 'd/m/Y H:i:s',
+                ])
             ->end()
-
-            // ----------------------------------------------------
-            // II. INFORMATIONS D'IDENTITÉ
-            // ----------------------------------------------------
             ->with('Informations Utilisateur', [
                 'class' => 'col-md-8',
                 'label' => 'login.info_user',
+                'box_class' => 'box box-solid box-solid-with',
                 'translation_domain' => $translationDomain
                 ])
-            // Utilisateur
-            ->add('username', FieldDescriptionInterface::TYPE_STRING, [
-                'label' => 'login.username',
-                'translation_domain' => $translationDomain,
-            ])
-            // Email
-            ->add('email', FieldDescriptionInterface::TYPE_EMAIL, [
-                'label' => 'login.email',
-                'translation_domain' => $translationDomain,
-            ])
-            // Classe/Rôle de l'utilisateur
-            // Note: Affiché comme string car la valeur de l'Enum est stockée en BDD
-            ->add('userClass', FieldDescriptionInterface::TYPE_ENUM, [
-                'label' => 'login.user_class',
-                'translation_domain' => $translationDomain,
-            'template' => 'bundles/SonataAdminBundle/CRUD/show_user_class.html.twig'
-            ])
+                ->add('username', FieldDescriptionInterface::TYPE_STRING, [
+                    'label' => 'login.username',
+                    'translation_domain' => $translationDomain,
+                ])
+                ->add('email', FieldDescriptionInterface::TYPE_EMAIL, [
+                    'label' => 'login.email',
+                    'translation_domain' => $translationDomain,
+                ])
+                ->add('userClass', FieldDescriptionInterface::TYPE_ENUM, [
+                    'label' => 'login.user_class',
+                    'translation_domain' => $translationDomain,
+                'template' => 'bundles/SonataAdminBundle/CRUD/show_user_class.html.twig'
+                ])
             ->end()
-
-            // ----------------------------------------------------
-            // III. CONTEXTE DE LA REQUÊTE
-            // ----------------------------------------------------
             ->with('Contexte Technique', [
                 'class' => 'col-md-12',
-            'label' => 'login.context',
-            'translation_domain' => $translationDomain])
-            // Adresse IP
-            ->add('lastLoginIp', FieldDescriptionInterface::TYPE_STRING, [
-                'label' => 'login.lastLoginIp',
-                'translation_domain' => $translationDomain,
-            ])
+                'label' => 'login.context',
+                'box_class' => 'box box-solid box-solid-with',
+                'translation_domain' => $translationDomain])
+                ->add('lastLoginIp', FieldDescriptionInterface::TYPE_STRING, [
+                    'label' => 'login.lastLoginIp',
+                    'translation_domain' => $translationDomain,
+                ])
             ->end()
         ;
     }

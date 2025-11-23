@@ -64,7 +64,7 @@ abstract class AbstractUser implements BaseUserInterface ,\Stringable
     protected ?\DateTimeInterface  $tokenRequestedAt = null;
 
     // Le compte est-il vérifié par e-mail ?
-    protected bool $isEmailVerified = false;
+    protected bool $emailVerified ;
 
     protected ?\DateTimeImmutable $emailVerifiedAt = null;
 
@@ -374,12 +374,12 @@ abstract class AbstractUser implements BaseUserInterface ,\Stringable
 
     public function prePersist(): void
     {
-        $this->createdAt = new \DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable('now',new \DateTimeZone('UTC'));
     }
 
     public function preUpdate(): void
     {
-        $this->updatedAt = new \DateTime();
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     public function getStatus():bool{
@@ -406,15 +406,23 @@ abstract class AbstractUser implements BaseUserInterface ,\Stringable
     /**
      * Get the value of isEmailVerified
      */
+    public function isEmailVerified(): bool
+    {
+        return $this->emailVerified ?? false;
+    }
+
+    /**
+     * Get the value of isEmailVerified
+     */
     public function isIsEmailVerified(): bool
     {
-        return $this->isEmailVerified;
+        return $this->isEmailVerified();
     }
 
     
     public function setIsEmailVerified(bool $isEmailVerified): void
     {
-        $this->isEmailVerified = $isEmailVerified;
+        $this->emailVerified = $isEmailVerified;
     }
 
     public function getEmailVerifiedAt(): ?\DateTimeImmutable
@@ -425,6 +433,12 @@ abstract class AbstractUser implements BaseUserInterface ,\Stringable
     public function setEmailVerifiedAt(?\DateTimeImmutable $emailVerifiedAt): void
     {
         $this->emailVerifiedAt = $emailVerifiedAt;
+    }
+
+    public function hasPassword(): bool
+    {
+        // Utilise une vérification stricte pour s'assurer que le mot de passe n'est pas NULL et n'est pas vide.
+        return $this->password !== null && $this->password !== '';
     }
 }
 

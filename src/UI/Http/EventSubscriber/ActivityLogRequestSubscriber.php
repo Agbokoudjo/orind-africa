@@ -28,6 +28,7 @@ use App\Application\Queue\AsyncMethodDispatcherInterface;
 use App\Domain\User\Exception\UnresolvableUserTypeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Application\UseCase\CommandHandler\ActivityLogCommandHandler;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
  * Subscriber pour l'enregistrement automatique des activités utilisateurs.
@@ -58,6 +59,7 @@ final class ActivityLogRequestSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly AsyncMethodDispatcherInterface $enqueue,
         private readonly SecurityContextInterface $security,
+        private readonly ParameterBagInterface $parameterBag,
         private readonly ?LoggerInterface $logger = null
     ) {}
 
@@ -68,7 +70,7 @@ final class ActivityLogRequestSubscriber implements EventSubscriberInterface
     {
         return [
             // Priorité 0 = exécuté après la réponse envoyée
-            KernelEvents::TERMINATE => ['onKernelTerminate', 0],
+            KernelEvents::TERMINATE => ['onKernelTerminate', -107],
         ];
     }
 
@@ -83,6 +85,10 @@ final class ActivityLogRequestSubscriber implements EventSubscriberInterface
      */
     public function onKernelTerminate(TerminateEvent $event): void
     {
+        if (!$this->isListenerEnabled()) {
+            return;
+        }
+
         if (!$event->isMainRequest()) {
             return;
         }
@@ -115,6 +121,7 @@ final class ActivityLogRequestSubscriber implements EventSubscriberInterface
                     'referer' => $request->headers->get('Referer'),
                     'status_code' => $event->getResponse()->getStatusCode(),
                     'request_data' => $this->sanitizeRequestData($request),
+                    'systeme_operational'=>$request->headers->get('sec-ch-ua-platform',''),
                 ]
             );
 
@@ -250,5 +257,21 @@ final class ActivityLogRequestSubscriber implements EventSubscriberInterface
         }
 
         return $data;
+    }
+
+    /**
+     * Vérifie si le listener est activé via la configuration.
+     *
+     * @return bool True si activé, false sinon
+     */
+    private function isListenerEnabled(): bool
+    {
+        $enabled = $this->parameterBag->get('app.execute_listener');
+
+        if (!$enabled) {
+            $this->logger?->debug('Listener désactivé via configuration app.execute_listener');
+        }
+
+        return (bool) $enabled;
     }
 }

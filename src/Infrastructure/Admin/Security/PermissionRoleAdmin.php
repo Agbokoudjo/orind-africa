@@ -54,7 +54,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
         'translation_domain' => 'Admin',
         'show_in_roles_matrix' => true,
         'roles' => ['ROLE_ADMIN'],
-        'security_handler' => PermissionRoleSecurityHandler::class
+        'security_handler' => PermissionRoleSecurityHandler::class,
+        'pager_type' => 'simple'
     ]
 )]
 final class PermissionRoleAdmin extends WlindablaAdmin

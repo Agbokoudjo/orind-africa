@@ -3,7 +3,3 @@ controllers:
         path: ../src/UI/Http/Controller/
         namespace: App\UI\Http\Controller
     type: attribute
-
-sonata_user_admin_security_logout:
-    path: user/logout
-    methods: GET

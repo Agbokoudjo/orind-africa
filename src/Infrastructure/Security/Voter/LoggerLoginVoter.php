@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Voter;
 
-use App\Domain\User\Model\BaseUserInterface;
 use App\Domain\User\Model\MemberUserInterface;
 use App\Domain\Security\ObjectPermissionInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -46,8 +45,6 @@ final class LoggerLoginVoter extends Voter implements ObjectPermissionInterface
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        dump(in_array($attribute, self::SUPPORT)
-            && $subject instanceof LoggerLoginUserEntity);
         return in_array($attribute,self::SUPPORT)
                && $subject instanceof LoggerLoginUserEntity;
     }
@@ -60,18 +57,14 @@ final class LoggerLoginVoter extends Voter implements ObjectPermissionInterface
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $_user = $token->getUser();
-
-        dump(in_array($attribute, self::SUPPORT)
-            && $subject instanceof LoggerLoginUserEntity, $_user);
-        if (!$_user instanceof AdminUserInterface || !$subject instanceof MemberUserInterface) {
-
+        if (!$_user instanceof AdminUserInterface && !$_user instanceof MemberUserInterface) {
             return false;
         }
-       
+      
         if($_user->isSuperAdmin() || $_user->isFounder()){
             return true  ;
         }
-       dump($attribute);
+     
         return $this->authorizationCheckerForUser->isGrantedForUser($_user,self::PERMISSION_AUDITOR);
     }
 }

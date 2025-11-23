@@ -54,7 +54,7 @@ final class MemberUser extends SonataUser implements MemberUserInterface{
     {
         $this->groups=new ArrayCollection();
     }
-    public function getRolePrincipal(): string{return self::ROLE_DEFAULT;}
+    public function getRolePrincipal(): string{return 'ROLE_MEMBER';}
 
     /**
      * Get the value of skills

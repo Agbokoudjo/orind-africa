@@ -21,6 +21,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use App\Infrastructure\Admin\User\AbstractUserAdmin;
 use App\Infrastructure\Persistance\AdminUserManager;
 use App\Infrastructure\Doctrine\Entity\User\AdminUser;
+use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use App\Infrastructure\Security\Voter\UserProfileEditVoter;
 use App\UI\Http\Controller\Admin\User\AdminUserCRUDController;
 use App\Infrastructure\Security\Handler\AdminUserRoleSecurityHandler;
@@ -58,6 +59,11 @@ final class AdminUserAdmin extends AbstractUserAdmin
         parent::__construct("label_list_admin_user",null, 'label_create_admin_user');
     }
 
+     final protected function configureRoutes(RouteCollectionInterface $collection): void
+    {
+       parent::configureRoutes($collection);    
+    }
+    
     protected function configureFormFields(FormMapper $form): void
     {
 
@@ -94,4 +100,7 @@ final class AdminUserAdmin extends AbstractUserAdmin
     {
         return $this->adminUserManager->getEntityManager();
     }
+    protected function getUserAdminCode():string{ return $this->getCode() ;}
+
+    protected function getController():string{ return AdminUserCRUDController::class ;}
 }
