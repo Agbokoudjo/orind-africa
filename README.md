@@ -1,5 +1,14 @@
-Super 👌 je vais compléter ton `README.md` avec une section **Installation rapide** (bien formatée en Markdown).
-Voici la version complète prête à coller dans ton fichier :
+<img width="1366" height="768" alt="Capture du 2025-10-29 10-36-23" src="https://github.com/user-attachments/assets/41dc2112-e3de-49f0-b8cf-d4946409fb9e" />
+
+<img width="1366" height="768" alt="Capture du 2025-10-29 10-36-14" src="https://github.com/user-attachments/assets/bd56ae98-1c4f-4aaa-a3c5-123f7e8f46b8" />
+
+<img width="1354" height="600" alt="Capture du 2025-10-29 12-01-13" src="https://github.com/user-attachments/assets/8100175b-816c-4d75-9c54-d8b034265365" />
+
+<img width="1366" height="768" alt="Capture du 2025-10-29 12-02-30" src="https://github.com/user-attachments/assets/e21d1c8e-1913-4c2a-933c-ad7ec22c35ef" />
+
+<img width="1366" height="768" alt="Capture du 2025-10-29 10-03-38" src="https://github.com/user-attachments/assets/4f857f41-56b0-4d8e-9f56-00c3f0a43560" />
+
+
 
 ````markdown
 # ORIND-Africa
