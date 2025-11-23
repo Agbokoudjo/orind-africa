@@ -1,18 +1,3 @@
-````markdown
-# ORIND-Africa
-
-**Plateforme numérique officielle de l’organisation ORIND-Africa**  
-*(Organisation des Réalisateurs, Informaticiens, Numériques et Développeurs Africains)*
-
----
-
-## 🚀 Présentation
-Ce projet constitue le siège numérique d’ORIND-Africa, centralisant la gestion des membres, projets, services et outils collaboratifs.  
-Il regroupe à la fois le **back-office** et le **front-office** de la plateforme.
-
----
-
-
 <img width="1358" height="598" alt="login" src="https://github.com/user-attachments/assets/850fff5d-6807-4a0c-8e38-6479f59d13d8" />
 
 
@@ -44,6 +29,20 @@ Il regroupe à la fois le **back-office** et le **front-office** de la plateform
 <img width="1366" height="768" alt="Capture du 2025-11-20 17-06-07" src="https://github.com/user-attachments/assets/24a55a84-040a-4b28-910f-86a02b3160b8" />
 
 
+
+````markdown
+# ORIND-Africa
+
+**Plateforme numérique officielle de l’organisation ORIND-Africa**  
+*(Organisation des Réalisateurs, Informaticiens, Numériques et Développeurs Africains)*
+
+---
+
+## 🚀 Présentation
+Ce projet constitue le siège numérique d’ORIND-Africa, centralisant la gestion des membres, projets, services et outils collaboratifs.  
+Il regroupe à la fois le **back-office** et le **front-office** de la plateforme.
+
+---
 
 ## 🛠️ Stack technique
 
